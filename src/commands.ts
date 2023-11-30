@@ -16,11 +16,11 @@
 
 import { exec } from './lib/exec'
 
-const up = (stackName: string) =>
-  exec(`nitric up --ci --stack ${stackName}`).then(r => r.stdout)
+const up = async (stackName: string) =>
+  (await exec(`nitric up --ci --stack ${stackName}`)).stdout
 
-const down = (stackName: string) =>
-  exec(`nitric down --ci --stack ${stackName}`).then(r => r.stdout)
+const down = async (stackName: string) =>
+  (await exec(`nitric down --ci --stack ${stackName}`)).stdout
 
 export const commands = {
   up,

@@ -1,39 +1,47 @@
-/**
- * Unit tests for the action's main functionality, src/main.ts
- *
- * These should be run as if the action was called from a workflow.
- * Specifically, the inputs listed in `action.yml` should be set as environment
- * variables following the pattern `INPUT_<INPUT_NAME>`.
- */
+// /**
+//  * Unit tests for the action's main functionality, src/main.ts
+//  *
+//  * These should be run as if the action was called from a workflow.
+//  * Specifically, the inputs listed in `action.yml` should be set as environment
+//  * variables following the pattern `INPUT_<INPUT_NAME>`.
+//  */
 
 import * as core from '@actions/core'
 import * as main from '../src/main'
+import {
+  beforeEach,
+  expect,
+  test,
+  describe,
+  vitest,
+  type SpyInstance
+} from 'vitest'
 
 // Mock the action's main function
-const runMock = jest.spyOn(main, 'run')
+const runMock = vitest.spyOn(main, 'run')
 
 // Other utilities
 const timeRegex = /^\d{2}:\d{2}:\d{2}/
 
 // Mock the GitHub Actions core library
-let debugMock: jest.SpyInstance
-let errorMock: jest.SpyInstance
-let getInputMock: jest.SpyInstance
-let setFailedMock: jest.SpyInstance
-let setOutputMock: jest.SpyInstance
+let debugMock: SpyInstance
+let errorMock: SpyInstance
+let getInputMock: SpyInstance
+let setFailedMock: SpyInstance
+let setOutputMock: SpyInstance
 
 describe('action', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vitest.clearAllMocks()
 
-    debugMock = jest.spyOn(core, 'debug').mockImplementation()
-    errorMock = jest.spyOn(core, 'error').mockImplementation()
-    getInputMock = jest.spyOn(core, 'getInput').mockImplementation()
-    setFailedMock = jest.spyOn(core, 'setFailed').mockImplementation()
-    setOutputMock = jest.spyOn(core, 'setOutput').mockImplementation()
+    debugMock = vitest.spyOn(core, 'debug')
+    errorMock = vitest.spyOn(core, 'error')
+    getInputMock = vitest.spyOn(core, 'getInput')
+    setFailedMock = vitest.spyOn(core, 'setFailed')
+    setOutputMock = vitest.spyOn(core, 'setOutput')
   })
 
-  it('sets the version output', async () => {
+  test('sets the version output', async () => {
     // Set the action's inputs as return values from core.getInput()
     getInputMock.mockImplementation((name: string): string => {
       switch (name) {
@@ -65,7 +73,7 @@ describe('action', () => {
     expect(errorMock).not.toHaveBeenCalled()
   })
 
-  it('sets a failed status', async () => {
+  test('sets a failed status', async () => {
     // Set the action's inputs as return values from core.getInput()
     getInputMock.mockImplementation((name: string): string => {
       switch (name) {

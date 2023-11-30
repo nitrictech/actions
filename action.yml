@@ -11,8 +11,8 @@ branding:
 inputs:
   version:
     description:
-      'Version of the Nitric CLI to install, or 'latest' (default). This accepts
-      semver ranges like ^1.33.0.'
+      'Version of the Nitric CLI to install, or "latest" (default). This accepts
+      semver ranges like 1.33.0.'
     required: true
     default: 'latest'
   github-token:
@@ -20,7 +20,7 @@ inputs:
     required: true
     default: ${{ github.token }}
   command:
-    description: 'Nitric command to run, eg. up'
+    description: 'Nitric command to run, eg. up or down'
     required: false
   stack-name:
     description: 'Which stack you want to deploy, eg. dev'

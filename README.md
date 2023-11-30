@@ -1,23 +1,65 @@
-# Nitric CLI Action
+# Nitric GitHub Actions
 
-This action sets up the [Nitric](https://nitric.io) CLI on GitHub's hosted
-Actions runners.
+![](https://github.com/nitrictech/actions/workflows/build-test/badge.svg)
+![](https://github.com/nitrictech/actions/workflows/CodeQL/badge.svg)
 
-Nitric's GitHub Setup exposes the Nitric CLI to your GitHub workflow so that you
-can run any command you wish using actions.
+Nitric GitHub Actions streamlines workflow automation for Nitric CLI integration
+within GitHub's hosted Actions runners. Nitric, accessible at
+[nitric.io](https://nitric.io), extends its Command Line Interface (CLI) to
+GitHub workflows, empowering the execution of diverse Nitric commands through
+seamlessly integrated actions.
 
-Run this action on `ubuntu-latest` since the MacOS runner lacks Docker and
-Windows VMs have depth limitations. The action installs and exposes the
-specified version of the Nitric CLI on the runner environment.
+This action is designed to be run on `ubuntu-latest` due to limitations on MacOS
+runners and Windows VMs. It ensures the installation and exposure of a specified
+version of the Nitric CLI on the GitHub Actions runner environment.
 
 ## Usage
 
-Setup the Nitric CLI:
+```yaml
+name: Nitric
+on:
+  push:
+    branches:
+      - main
+jobs:
+  up:
+    name: Update AWS
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: nitrictech/actions@v1
+        with:
+          command: up
+          stack-name: prod
+        env:
+          PULUMI_CONFIG_PASSPHRASE: ${{ secrets.PULUMI_CONFIG_PASSPHRASE }}
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+```
+
+This will check out the existing directory and run nitric up.
+
+## Inputs
+
+The actions supports the following inputs:
+
+| Name         | Type   | Description                                                                                                                              | Default  | Required                  |
+| ------------ | ------ | ---------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------- |
+| `version`    | String | Nitric CLI version (or `latest`)                                                                                                         | `latest` | false                     |
+| `command`    | String | The command to run as part of the action. Accepted values are up and down. If unspecified, the action will stop after installing Nitric. |          | false                     |
+| `stack-name` | String | The name of the stack that Nitric will be operating on. The stack file should be located in the working directory.                       |          | When command is specified |
+
+## Installation Only
+
+If you want to only install the Nitric CLI, omit the `command` field of the
+action.
 
 ```yaml
-steps:
-  - uses: nitrictech/actions@v1
+- uses: nitrictech/actions@v1
 ```
+
+## Specific Version
 
 A specific version of the `Nitric` CLI can be installed:
 
@@ -28,47 +70,13 @@ steps:
       version: 1.33.3
 ```
 
-Run `nitric up` to deploy a stack named `dev` to AWS:
+## Examples
 
-```yaml
-steps:
-  - uses: nitrictech/actions@v1
-    with:
-      version: latest
-  - run: nitric up -s dev --ci
-```
+Below are some example workflows:
 
-## Inputs
-
-```yaml
-version:
-  description: Version of the CLI being used
-  required: false
-  default: 1.2.1
-```
-
-## Example workflow
-
-```yaml
-name: Sample configuration to deploy to AWS
-on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
-env:
-  PULUMI_CONFIG_PASSPHRASE: ${{ secrets.PULUMI_CONFIG_PASSPHRASE }}
-  PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
-jobs:
-  update:
-    name: Deploy
-    runs-on: ubuntu-latest
-    steps:
-      - name: Install Nitric CLI
-        uses: nitrictech/actions@v1
-        with:
-          version: 1.2.1
-```
+- [AWS](examples/aws.yaml)
+- [Azure](examples/azure.yaml)
+- [Google Cloud](examples/gcp.yaml)
 
 ## Develop
 
@@ -84,7 +92,7 @@ Build the typescript and package it for distribution
 npm run package
 ```
 
-Run the tests ✔️
+Run the tests
 
 ```bash
 npm test

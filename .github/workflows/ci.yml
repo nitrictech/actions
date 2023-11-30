@@ -46,6 +46,9 @@ jobs:
   test-action:
     name: GitHub Actions Test
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: [1.33.0, latest]
 
     steps:
       - name: Checkout
@@ -56,7 +59,7 @@ jobs:
         id: test-action
         uses: ./
         with:
-          version: latest
+          version: ${{ matrix.version }}
 
       - name: Print Output
         id: output

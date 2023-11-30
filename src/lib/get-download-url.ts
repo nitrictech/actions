@@ -15,7 +15,7 @@
 // limitations under the License.
 
 import os from 'os'
-import got from 'got'
+import ky from 'ky'
 
 const getArch = (arch: string) => {
   const mappings: Record<string, string> = {
@@ -28,13 +28,12 @@ const getArch = (arch: string) => {
 const getLatestVersion = async () => {
   try {
     // Fetch the latest release information
-    const result = await got<{ tag_name: string }>(
-      'https://api.github.com/repos/nitrictech/cli/releases/latest',
-      { responseType: 'json' }
-    )
+    const result = await ky
+      .get('https://api.github.com/repos/nitrictech/cli/releases/latest')
+      .json<{ tag_name: string }>()
 
     // Extract the tag name (version)
-    const version = result.body.tag_name
+    const version = result.tag_name
 
     return version.replace(/^v/, '')
   } catch (error) {

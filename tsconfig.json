@@ -2,9 +2,9 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "target": "ES2022",
-    "module": "CommonJS",
     "rootDir": "./src",
     "moduleResolution": "Node",
+    "module": "CommonJS",
     "isolatedModules": true,
     "baseUrl": "./",
     "sourceMap": true,
@@ -14,11 +14,13 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,
-    "newLine": "lf",
-    "paths": {
-      "~/*": ["./src/*"],
-      "got": ["./node_modules/got/dist/source"]
-    }
+    "newLine": "lf"
   },
-  "exclude": ["./dist", "./node_modules", "./__tests__", "./coverage"]
+  "exclude": [
+    "./dist",
+    "./node_modules",
+    "./__tests__",
+    "./coverage",
+    "vite.config.ts"
+  ]
 }

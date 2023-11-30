@@ -100,7 +100,9 @@ npm test
 
 ## Release
 
-To update your changes, rebuild the dist folder with the following command -
+To publish the action, we use
+[JasonEtco/build-and-tag-action](https://github.com/JasonEtco/build-and-tag-action).
+This automates the build and tagging process.
 
 ```bash
 npm run all

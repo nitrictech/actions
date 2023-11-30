@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "rootDir": "./src",
+    "moduleResolution": "Node",
+    "isolatedModules": true,
+    "baseUrl": "./",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "noImplicitAny": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "newLine": "lf",
+    "paths": {
+      "~/*": ["./src/*"],
+      "got": ["./node_modules/got/dist/source"]
+    }
+  },
+  "exclude": ["./dist", "./node_modules", "./__tests__", "./coverage"]
+}

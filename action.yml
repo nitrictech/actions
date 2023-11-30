@@ -1,0 +1,36 @@
+name: 'Nitric CLI Action'
+description: 'Setup Nitric CLI on GitHub Actions runners'
+author: 'Nitric'
+
+# Add your action's branding here. This will appear on the GitHub Marketplace.
+branding:
+  icon: 'upload-cloud'
+  color: 'blue'
+
+# Define your inputs here.
+inputs:
+  version:
+    description:
+      'Version of the Nitric CLI to install, or 'latest' (default). This accepts
+      semver ranges like ^1.33.0.'
+    required: true
+    default: 'latest'
+  github-token:
+    description: 'Token used to query nitric versions'
+    required: true
+    default: ${{ github.token }}
+  command:
+    description: 'Nitric command to run, eg. up'
+    required: false
+  stack-name:
+    description: 'Which stack you want to deploy, eg. dev'
+    required: false
+
+# Define your outputs here.
+outputs:
+  version:
+    description: 'Version of installed Nitric CLI'
+
+runs:
+  using: node20
+  main: dist/index.js

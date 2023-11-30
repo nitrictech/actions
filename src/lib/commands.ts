@@ -14,13 +14,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { exec } from './lib/exec'
+import { exec } from './exec'
 
 const up = async (stackName: string) =>
-  (await exec(`nitric up --ci --stack ${stackName}`)).stdout
+  (await exec(`nitric up --ci --stack ${stackName} -v2`)).stdout
 
 const down = async (stackName: string) =>
-  (await exec(`nitric down --ci --stack ${stackName}`)).stdout
+  (await exec(`nitric down --ci --stack ${stackName} -v2`)).stdout
 
 export const commands = {
   up,

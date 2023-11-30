@@ -23,7 +23,7 @@ import * as semver from 'semver'
 import { existsSync } from 'fs'
 import { getDownloadUrl } from './lib/get-download-url'
 import { getVersion } from './lib/get-version'
-import { commands } from './commands'
+import { commands } from './lib/commands'
 
 const supportedPlatforms = ['linux']
 

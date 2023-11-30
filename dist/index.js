@@ -35800,6 +35800,199 @@ exports["default"] = _default;
 
 /***/ }),
 
+/***/ 6695:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+// Copyright Nitric Pty Ltd.
+//
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at:
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.commands = void 0;
+const exec_1 = __nccwpck_require__(4969);
+const up = (stackName) => (0, exec_1.exec)(`nitric up --ci --stack ${stackName}`).then(r => r.stdout);
+const down = (stackName) => (0, exec_1.exec)(`nitric down --ci --stack ${stackName}`).then(r => r.stdout);
+exports.commands = {
+    up,
+    down
+};
+
+
+/***/ }),
+
+/***/ 4969:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+// Copyright Nitric Pty Ltd.
+//
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at:
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.exec = void 0;
+const aexec = __importStar(__nccwpck_require__(1514));
+const exec = async (command, args = [], silent) => {
+    const { exitCode, stdout, stderr } = await aexec.getExecOutput(command, args, {
+        silent: silent,
+        ignoreReturnCode: true
+    });
+    return {
+        success: exitCode === 0,
+        stdout: stdout.trim(),
+        stderr: stderr.trim()
+    };
+};
+exports.exec = exec;
+
+
+/***/ }),
+
+/***/ 8427:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+// Copyright Nitric Pty Ltd.
+//
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at:
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getDownloadUrl = void 0;
+const os_1 = __importDefault(__nccwpck_require__(2037));
+const got_1 = __importDefault(__nccwpck_require__(643));
+const getArch = (arch) => {
+    const mappings = {
+        arm64: 'arm64'
+    };
+    return mappings[arch] || 'x86_64';
+};
+const getLatestVersion = async () => {
+    try {
+        // Fetch the latest release information
+        const result = await (0, got_1.default)('https://api.github.com/repos/nitrictech/cli/releases/latest', { responseType: 'json' });
+        // Extract the tag name (version)
+        const version = result.body.tag_name;
+        return version.replace(/^v/, '');
+    }
+    catch (error) {
+        console.error('Error fetching latest release:', error);
+    }
+};
+const getDownloadUrl = async (version) => {
+    const arch = getArch(os_1.default.arch());
+    if (version.toLowerCase() === 'latest') {
+        const latestVersion = await getLatestVersion();
+        if (!latestVersion) {
+            throw new Error('error finding latest nitric version');
+        }
+        version = latestVersion;
+    }
+    const filename = `nitric_${version}_Linux_${arch}.tar.gz`;
+    return `https://github.com/nitrictech/cli/releases/download/v${version}/${filename}`;
+};
+exports.getDownloadUrl = getDownloadUrl;
+
+
+/***/ }),
+
+/***/ 6052:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+// Copyright Nitric Pty Ltd.
+//
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at:
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getVersion = void 0;
+const exec_1 = __nccwpck_require__(4969);
+const getVersion = async () => {
+    const { stdout } = await (0, exec_1.exec)('nitric', ['version']);
+    const version = stdout.trim();
+    if (!version) {
+        throw new Error('Could not determine installed Nitric CLI version');
+    }
+    return version;
+};
+exports.getVersion = getVersion;
+
+
+/***/ }),
+
 /***/ 399:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -35851,7 +36044,10 @@ const os = __importStar(__nccwpck_require__(2037));
 const io = __importStar(__nccwpck_require__(7436));
 const path = __importStar(__nccwpck_require__(1017));
 const semver = __importStar(__nccwpck_require__(1383));
-const utils_1 = __nccwpck_require__(1314);
+const fs_1 = __nccwpck_require__(7147);
+const get_download_url_1 = __nccwpck_require__(8427);
+const get_version_1 = __nccwpck_require__(6052);
+const commands_1 = __nccwpck_require__(6695);
 const supportedPlatforms = ['linux'];
 async function run() {
     try {
@@ -35866,8 +36062,23 @@ async function run() {
         if (!semver.valid(version) && version.toLowerCase() !== 'latest') {
             throw new Error('Incorrect version - Use semantic versioning E.g. 1.2.1');
         }
+        // Check command
+        const command = core.getInput('command')?.trim();
+        const stackName = core.getInput('stack-name')?.trim();
+        if (command) {
+            if (!(command in commands_1.commands)) {
+                throw new Error(`Incorrect command - use one of the supported commands ${Object.keys(commands_1.commands).join(', ')}`);
+            }
+            // Check stack-name
+            if (!stackName) {
+                throw new Error('A stack-name is required when using a command');
+            }
+            if (!(0, fs_1.existsSync)(`./nitric-${stackName}.yaml`)) {
+                throw new Error(`Stack '${stackName}' does not exist. Check ensure the nitric-${stackName}.yaml stack file exists`);
+            }
+        }
         // Download release version
-        const url = await (0, utils_1.getDownloadUrl)(version);
+        const url = await (0, get_download_url_1.getDownloadUrl)(version);
         let downloaded;
         try {
             downloaded = await tc.downloadTool(url);
@@ -35883,8 +36094,18 @@ async function run() {
         await tc.extractTar(downloaded, destination);
         const cachedPath = await tc.cacheDir(destination, 'nitric', version);
         core.addPath(cachedPath);
-        const installedVersion = await (0, utils_1.getInstalledVersion)();
+        const installedVersion = await (0, get_version_1.getVersion)();
         core.setOutput('version', installedVersion);
+        // run command if exists
+        if (command && stackName) {
+            core.info(`Running command ${command}`);
+            const output = await commands_1.commands[command](stackName);
+            core.info(`Done running command ${command}`);
+            core.setOutput('output', output);
+            // cache docker
+            await tc.cacheDir(path.join(os.homedir(), '.docker'), 'docker', version);
+            //await tc.cacheDir('/tmp/.buildx-cache', 'buildx', version)
+        }
     }
     catch (error) {
         if (error instanceof Error)
@@ -35893,65 +36114,6 @@ async function run() {
 }
 exports.run = run;
 run();
-
-
-/***/ }),
-
-/***/ 1314:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getInstalledVersion = exports.getDownloadUrl = void 0;
-const os_1 = __importDefault(__nccwpck_require__(2037));
-const child_process_1 = __nccwpck_require__(2081);
-const got_1 = __importDefault(__nccwpck_require__(137));
-const util_1 = __nccwpck_require__(3837);
-const doExec = (0, util_1.promisify)(child_process_1.exec);
-const getArch = (arch) => {
-    const mappings = {
-        arm64: 'arm64'
-    };
-    return mappings[arch] || 'x86_64';
-};
-const getLatestVersion = async () => {
-    try {
-        // Fetch the latest release information
-        const result = await (0, got_1.default)('https://api.github.com/repos/nitrictech/cli/releases/latest', { responseType: 'json' });
-        // Extract the tag name (version)
-        const version = result.body.tag_name;
-        return version.replace(/^v/, '');
-    }
-    catch (error) {
-        console.error('Error fetching latest release:', error);
-    }
-};
-const getDownloadUrl = async (version) => {
-    const arch = getArch(os_1.default.arch());
-    if (version.toLowerCase() === 'latest') {
-        const latestVersion = await getLatestVersion();
-        if (!latestVersion) {
-            throw new Error('error finding latest nitric version');
-        }
-        version = latestVersion;
-    }
-    const filename = `nitric_${version}_Linux_${arch}.tar.gz`;
-    return `https://github.com/nitrictech/cli/releases/download/v${version}/${filename}`;
-};
-exports.getDownloadUrl = getDownloadUrl;
-const getInstalledVersion = async () => {
-    const { stdout } = await doExec('nitric version');
-    const version = stdout.trim();
-    if (!version) {
-        throw new Error('Could not determine installed Nitric CLI version');
-    }
-    return version;
-};
-exports.getInstalledVersion = getInstalledVersion;
 
 
 /***/ }),
@@ -37823,7 +37985,7 @@ module.exports = parseParams
 
 /***/ }),
 
-/***/ 137:
+/***/ 643:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __nccwpck_require__) => {
 
 "use strict";
@@ -37916,14 +38078,54 @@ const primitiveTypeNames = [
 function isPrimitiveTypeName(name) {
     return primitiveTypeNames.includes(name);
 }
-// eslint-disable-next-line @typescript-eslint/ban-types
-function isOfType(type) {
-    return (value) => typeof value === type;
-}
-const { toString: dist_toString } = Object.prototype;
+const assertionTypeDescriptions = [
+    'positive number',
+    'negative number',
+    'Class',
+    'string with a number',
+    'null or undefined',
+    'Iterable',
+    'AsyncIterable',
+    'native Promise',
+    'EnumCase',
+    'string with a URL',
+    'truthy',
+    'falsy',
+    'primitive',
+    'integer',
+    'plain object',
+    'TypedArray',
+    'array-like',
+    'tuple-like',
+    'Node.js Stream',
+    'infinite number',
+    'empty array',
+    'non-empty array',
+    'empty string',
+    'empty string or whitespace',
+    'non-empty string',
+    'non-empty string and not whitespace',
+    'empty object',
+    'non-empty object',
+    'empty set',
+    'non-empty set',
+    'empty map',
+    'non-empty map',
+    'PropertyKey',
+    'even integer',
+    'odd integer',
+    'T',
+    'in range',
+    'predicate returns truthy for any value',
+    'predicate returns truthy for all values',
+    'valid length',
+    'whitespace string',
+    ...objectTypeNames,
+    ...primitiveTypeNames,
+];
 const getObjectType = (value) => {
-    const objectTypeName = dist_toString.call(value).slice(8, -1);
-    if (/HTML\w+Element/.test(objectTypeName) && is.domElement(value)) {
+    const objectTypeName = Object.prototype.toString.call(value).slice(8, -1);
+    if (/HTML\w+Element/.test(objectTypeName) && isHtmlElement(value)) {
         return 'HTMLElement';
     }
     if (isObjectTypeName(objectTypeName)) {
@@ -37931,8 +38133,7 @@ const getObjectType = (value) => {
     }
     return undefined;
 };
-const isObjectOfType = (type) => (value) => getObjectType(value) === type;
-function is(value) {
+function detect(value) {
     if (value === null) {
         return 'null';
     }
@@ -37960,13 +38161,13 @@ function is(value) {
         }
         default:
     }
-    if (is.observable(value)) {
+    if (isObservable(value)) {
         return 'Observable';
     }
-    if (is.array(value)) {
+    if (isArray(value)) {
         return 'Array';
     }
-    if (is.buffer(value)) {
+    if (isBuffer(value)) {
         return 'Buffer';
     }
     const tagType = getObjectType(value);
@@ -37978,122 +38179,236 @@ function is(value) {
     }
     return 'Object';
 }
-is.undefined = isOfType('undefined');
-is.string = isOfType('string');
-const isNumberType = isOfType('number');
-is.number = (value) => isNumberType(value) && !is.nan(value);
-is.positiveNumber = (value) => is.number(value) && value > 0;
-is.negativeNumber = (value) => is.number(value) && value < 0;
-is.bigint = isOfType('bigint');
-// eslint-disable-next-line @typescript-eslint/ban-types
-is.function_ = isOfType('function');
-// eslint-disable-next-line @typescript-eslint/ban-types
-is.null_ = (value) => value === null;
-is.class_ = (value) => is.function_(value) && value.toString().startsWith('class ');
-is.boolean = (value) => value === true || value === false;
-is.symbol = isOfType('symbol');
-is.numericString = (value) => is.string(value) && !is.emptyStringOrWhitespace(value) && !Number.isNaN(Number(value));
-is.array = (value, assertion) => {
+function hasPromiseApi(value) {
+    return isFunction(value?.then) && isFunction(value?.catch);
+}
+const is = Object.assign(detect, {
+    all: isAll,
+    any: isAny,
+    array: isArray,
+    arrayBuffer: isArrayBuffer,
+    arrayLike: isArrayLike,
+    asyncFunction: isAsyncFunction,
+    asyncGenerator: isAsyncGenerator,
+    asyncGeneratorFunction: isAsyncGeneratorFunction,
+    asyncIterable: isAsyncIterable,
+    bigint: isBigint,
+    bigInt64Array: isBigInt64Array,
+    bigUint64Array: isBigUint64Array,
+    blob: isBlob,
+    boolean: isBoolean,
+    boundFunction: isBoundFunction,
+    buffer: isBuffer,
+    class: isClass,
+    /** @deprecated Renamed to `class`. */
+    class_: isClass,
+    dataView: isDataView,
+    date: isDate,
+    detect,
+    directInstanceOf: isDirectInstanceOf,
+    /** @deprecated Renamed to `htmlElement` */
+    domElement: isHtmlElement,
+    emptyArray: isEmptyArray,
+    emptyMap: isEmptyMap,
+    emptyObject: isEmptyObject,
+    emptySet: isEmptySet,
+    emptyString: isEmptyString,
+    emptyStringOrWhitespace: isEmptyStringOrWhitespace,
+    enumCase: isEnumCase,
+    error: isError,
+    evenInteger: isEvenInteger,
+    falsy: isFalsy,
+    float32Array: isFloat32Array,
+    float64Array: isFloat64Array,
+    formData: isFormData,
+    function: isFunction,
+    /** @deprecated Renamed to `function`. */
+    function_: isFunction,
+    generator: isGenerator,
+    generatorFunction: isGeneratorFunction,
+    htmlElement: isHtmlElement,
+    infinite: isInfinite,
+    inRange: isInRange,
+    int16Array: isInt16Array,
+    int32Array: isInt32Array,
+    int8Array: isInt8Array,
+    integer: isInteger,
+    iterable: isIterable,
+    map: isMap,
+    nan: isNan,
+    nativePromise: isNativePromise,
+    negativeNumber: isNegativeNumber,
+    nodeStream: isNodeStream,
+    nonEmptyArray: isNonEmptyArray,
+    nonEmptyMap: isNonEmptyMap,
+    nonEmptyObject: isNonEmptyObject,
+    nonEmptySet: isNonEmptySet,
+    nonEmptyString: isNonEmptyString,
+    nonEmptyStringAndNotWhitespace: isNonEmptyStringAndNotWhitespace,
+    null: isNull,
+    /** @deprecated Renamed to `null`. */
+    null_: isNull,
+    nullOrUndefined: isNullOrUndefined,
+    number: isNumber,
+    numericString: isNumericString,
+    object: isObject,
+    observable: isObservable,
+    oddInteger: isOddInteger,
+    plainObject: isPlainObject,
+    positiveNumber: isPositiveNumber,
+    primitive: isPrimitive,
+    promise: isPromise,
+    propertyKey: isPropertyKey,
+    regExp: isRegExp,
+    safeInteger: isSafeInteger,
+    set: isSet,
+    sharedArrayBuffer: isSharedArrayBuffer,
+    string: isString,
+    symbol: isSymbol,
+    truthy: isTruthy,
+    tupleLike: isTupleLike,
+    typedArray: isTypedArray,
+    uint16Array: isUint16Array,
+    uint32Array: isUint32Array,
+    uint8Array: isUint8Array,
+    uint8ClampedArray: isUint8ClampedArray,
+    undefined: isUndefined,
+    urlInstance: isUrlInstance,
+    urlSearchParams: isUrlSearchParams,
+    urlString: isUrlString,
+    validLength: isValidLength,
+    weakMap: isWeakMap,
+    weakRef: isWeakRef,
+    weakSet: isWeakSet,
+    whitespaceString: isWhitespaceString,
+});
+function isAbsoluteMod2(remainder) {
+    return (value) => isInteger(value) && Math.abs(value % 2) === remainder;
+}
+function isAll(predicate, ...values) {
+    return predicateOnArray(Array.prototype.every, predicate, values);
+}
+function isAny(predicate, ...values) {
+    const predicates = isArray(predicate) ? predicate : [predicate];
+    return predicates.some(singlePredicate => predicateOnArray(Array.prototype.some, singlePredicate, values));
+}
+function isArray(value, assertion) {
     if (!Array.isArray(value)) {
         return false;
     }
-    if (!is.function_(assertion)) {
+    if (!isFunction(assertion)) {
         return true;
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return value.every(element => assertion(element));
-};
-// eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
-is.buffer = (value) => value?.constructor?.isBuffer?.(value) ?? false;
-is.blob = (value) => isObjectOfType('Blob')(value);
-is.nullOrUndefined = (value) => is.null_(value) || is.undefined(value); // eslint-disable-line @typescript-eslint/ban-types
-is.object = (value) => !is.null_(value) && (typeof value === 'object' || is.function_(value)); // eslint-disable-line @typescript-eslint/ban-types
-is.iterable = (value) => is.function_(value?.[Symbol.iterator]);
-is.asyncIterable = (value) => is.function_(value?.[Symbol.asyncIterator]);
-is.generator = (value) => is.iterable(value) && is.function_(value?.next) && is.function_(value?.throw);
-is.asyncGenerator = (value) => is.asyncIterable(value) && is.function_(value.next) && is.function_(value.throw);
-is.nativePromise = (value) => isObjectOfType('Promise')(value);
-const hasPromiseApi = (value) => is.function_(value?.then)
-    && is.function_(value?.catch);
-is.promise = (value) => is.nativePromise(value) || hasPromiseApi(value);
-is.generatorFunction = isObjectOfType('GeneratorFunction');
-is.asyncGeneratorFunction = (value) => getObjectType(value) === 'AsyncGeneratorFunction';
-is.asyncFunction = (value) => getObjectType(value) === 'AsyncFunction';
-// eslint-disable-next-line no-prototype-builtins, @typescript-eslint/ban-types
-is.boundFunction = (value) => is.function_(value) && !value.hasOwnProperty('prototype');
-is.regExp = isObjectOfType('RegExp');
-is.date = isObjectOfType('Date');
-is.error = isObjectOfType('Error');
-is.map = (value) => isObjectOfType('Map')(value);
-is.set = (value) => isObjectOfType('Set')(value);
-is.weakMap = (value) => isObjectOfType('WeakMap')(value); // eslint-disable-line @typescript-eslint/ban-types
-is.weakSet = (value) => isObjectOfType('WeakSet')(value); // eslint-disable-line @typescript-eslint/ban-types
-is.weakRef = (value) => isObjectOfType('WeakRef')(value); // eslint-disable-line @typescript-eslint/ban-types
-is.int8Array = isObjectOfType('Int8Array');
-is.uint8Array = isObjectOfType('Uint8Array');
-is.uint8ClampedArray = isObjectOfType('Uint8ClampedArray');
-is.int16Array = isObjectOfType('Int16Array');
-is.uint16Array = isObjectOfType('Uint16Array');
-is.int32Array = isObjectOfType('Int32Array');
-is.uint32Array = isObjectOfType('Uint32Array');
-is.float32Array = isObjectOfType('Float32Array');
-is.float64Array = isObjectOfType('Float64Array');
-is.bigInt64Array = isObjectOfType('BigInt64Array');
-is.bigUint64Array = isObjectOfType('BigUint64Array');
-is.arrayBuffer = isObjectOfType('ArrayBuffer');
-is.sharedArrayBuffer = isObjectOfType('SharedArrayBuffer');
-is.dataView = isObjectOfType('DataView');
-// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-is.enumCase = (value, targetEnum) => Object.values(targetEnum).includes(value);
-is.directInstanceOf = (instance, class_) => Object.getPrototypeOf(instance) === class_.prototype;
-is.urlInstance = (value) => isObjectOfType('URL')(value);
-is.urlString = (value) => {
-    if (!is.string(value)) {
+}
+function isArrayBuffer(value) {
+    return getObjectType(value) === 'ArrayBuffer';
+}
+function isArrayLike(value) {
+    return !isNullOrUndefined(value) && !isFunction(value) && isValidLength(value.length);
+}
+function isAsyncFunction(value) {
+    return getObjectType(value) === 'AsyncFunction';
+}
+function isAsyncGenerator(value) {
+    return isAsyncIterable(value) && isFunction(value.next) && isFunction(value.throw);
+}
+function isAsyncGeneratorFunction(value) {
+    return getObjectType(value) === 'AsyncGeneratorFunction';
+}
+function isAsyncIterable(value) {
+    return isFunction(value?.[Symbol.asyncIterator]);
+}
+function isBigint(value) {
+    return typeof value === 'bigint';
+}
+function isBigInt64Array(value) {
+    return getObjectType(value) === 'BigInt64Array';
+}
+function isBigUint64Array(value) {
+    return getObjectType(value) === 'BigUint64Array';
+}
+function isBlob(value) {
+    return getObjectType(value) === 'Blob';
+}
+function isBoolean(value) {
+    return value === true || value === false;
+}
+// eslint-disable-next-line @typescript-eslint/ban-types
+function isBoundFunction(value) {
+    return isFunction(value) && !Object.prototype.hasOwnProperty.call(value, 'prototype');
+}
+function isBuffer(value) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
+    return value?.constructor?.isBuffer?.(value) ?? false;
+}
+function isClass(value) {
+    return isFunction(value) && value.toString().startsWith('class ');
+}
+function isDataView(value) {
+    return getObjectType(value) === 'DataView';
+}
+function isDate(value) {
+    return getObjectType(value) === 'Date';
+}
+function isDirectInstanceOf(instance, class_) {
+    if (instance === undefined || instance === null) {
         return false;
     }
-    try {
-        new URL(value); // eslint-disable-line no-new
-        return true;
-    }
-    catch {
-        return false;
-    }
-};
-// Example: `is.truthy = (value: unknown): value is (not false | not 0 | not '' | not undefined | not null) => Boolean(value);`
-is.truthy = (value) => Boolean(value); // eslint-disable-line unicorn/prefer-native-coercion-functions
+    return Object.getPrototypeOf(instance) === class_.prototype;
+}
+function isEmptyArray(value) {
+    return isArray(value) && value.length === 0;
+}
+function isEmptyMap(value) {
+    return isMap(value) && value.size === 0;
+}
+function isEmptyObject(value) {
+    return isObject(value) && !isMap(value) && !isSet(value) && Object.keys(value).length === 0;
+}
+function isEmptySet(value) {
+    return isSet(value) && value.size === 0;
+}
+function isEmptyString(value) {
+    return isString(value) && value.length === 0;
+}
+function isEmptyStringOrWhitespace(value) {
+    return isEmptyString(value) || isWhitespaceString(value);
+}
+function isEnumCase(value, targetEnum) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    return Object.values(targetEnum).includes(value);
+}
+function isError(value) {
+    return getObjectType(value) === 'Error';
+}
+function isEvenInteger(value) {
+    return isAbsoluteMod2(0)(value);
+}
 // Example: `is.falsy = (value: unknown): value is (not true | 0 | '' | undefined | null) => Boolean(value);`
-is.falsy = (value) => !value;
-is.nan = (value) => Number.isNaN(value);
-is.primitive = (value) => is.null_(value) || isPrimitiveTypeName(typeof value);
-is.integer = (value) => Number.isInteger(value);
-is.safeInteger = (value) => Number.isSafeInteger(value);
-is.plainObject = (value) => {
-    // From: https://github.com/sindresorhus/is-plain-obj/blob/main/index.js
-    if (typeof value !== 'object' || value === null) {
-        return false;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const prototype = Object.getPrototypeOf(value);
-    return (prototype === null || prototype === Object.prototype || Object.getPrototypeOf(prototype) === null) && !(Symbol.toStringTag in value) && !(Symbol.iterator in value);
-};
-is.typedArray = (value) => isTypedArrayName(getObjectType(value));
-const isValidLength = (value) => is.safeInteger(value) && value >= 0;
-is.arrayLike = (value) => !is.nullOrUndefined(value) && !is.function_(value) && isValidLength(value.length);
-is.tupleLike = (value, guards) => {
-    if (is.array(guards) && is.array(value) && guards.length === value.length) {
-        return guards.every((guard, index) => guard(value[index]));
-    }
-    return false;
-};
-is.inRange = (value, range) => {
-    if (is.number(range)) {
-        return value >= Math.min(0, range) && value <= Math.max(range, 0);
-    }
-    if (is.array(range) && range.length === 2) {
-        return value >= Math.min(...range) && value <= Math.max(...range);
-    }
-    throw new TypeError(`Invalid range: ${JSON.stringify(range)}`);
-};
+function isFalsy(value) {
+    return !value;
+}
+function isFloat32Array(value) {
+    return getObjectType(value) === 'Float32Array';
+}
+function isFloat64Array(value) {
+    return getObjectType(value) === 'Float64Array';
+}
+function isFormData(value) {
+    return getObjectType(value) === 'FormData';
+}
+// eslint-disable-next-line @typescript-eslint/ban-types
+function isFunction(value) {
+    return typeof value === 'function';
+}
+function isGenerator(value) {
+    return isIterable(value) && isFunction(value?.next) && isFunction(value?.throw);
+}
+function isGeneratorFunction(value) {
+    return getObjectType(value) === 'GeneratorFunction';
+}
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const NODE_TYPE_ELEMENT = 1;
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -38104,12 +38419,96 @@ const DOM_PROPERTIES_TO_CHECK = [
     'attributes',
     'nodeValue',
 ];
-is.domElement = (value) => is.object(value)
-    && value.nodeType === NODE_TYPE_ELEMENT
-    && is.string(value.nodeName)
-    && !is.plainObject(value)
-    && DOM_PROPERTIES_TO_CHECK.every(property => property in value);
-is.observable = (value) => {
+function isHtmlElement(value) {
+    return isObject(value)
+        && value.nodeType === NODE_TYPE_ELEMENT
+        && isString(value.nodeName)
+        && !isPlainObject(value)
+        && DOM_PROPERTIES_TO_CHECK.every(property => property in value);
+}
+function isInfinite(value) {
+    return value === Number.POSITIVE_INFINITY || value === Number.NEGATIVE_INFINITY;
+}
+function isInRange(value, range) {
+    if (isNumber(range)) {
+        return value >= Math.min(0, range) && value <= Math.max(range, 0);
+    }
+    if (isArray(range) && range.length === 2) {
+        return value >= Math.min(...range) && value <= Math.max(...range);
+    }
+    throw new TypeError(`Invalid range: ${JSON.stringify(range)}`);
+}
+function isInt16Array(value) {
+    return getObjectType(value) === 'Int16Array';
+}
+function isInt32Array(value) {
+    return getObjectType(value) === 'Int32Array';
+}
+function isInt8Array(value) {
+    return getObjectType(value) === 'Int8Array';
+}
+function isInteger(value) {
+    return Number.isInteger(value);
+}
+function isIterable(value) {
+    return isFunction(value?.[Symbol.iterator]);
+}
+function isMap(value) {
+    return getObjectType(value) === 'Map';
+}
+function isNan(value) {
+    return Number.isNaN(value);
+}
+function isNativePromise(value) {
+    return getObjectType(value) === 'Promise';
+}
+function isNegativeNumber(value) {
+    return isNumber(value) && value < 0;
+}
+function isNodeStream(value) {
+    return isObject(value) && isFunction(value.pipe) && !isObservable(value);
+}
+function isNonEmptyArray(value) {
+    return isArray(value) && value.length > 0;
+}
+function isNonEmptyMap(value) {
+    return isMap(value) && value.size > 0;
+}
+// TODO: Use `not` operator here to remove `Map` and `Set` from type guard:
+// - https://github.com/Microsoft/TypeScript/pull/29317
+function isNonEmptyObject(value) {
+    return isObject(value) && !isMap(value) && !isSet(value) && Object.keys(value).length > 0;
+}
+function isNonEmptySet(value) {
+    return isSet(value) && value.size > 0;
+}
+// TODO: Use `not ''` when the `not` operator is available.
+function isNonEmptyString(value) {
+    return isString(value) && value.length > 0;
+}
+// TODO: Use `not ''` when the `not` operator is available.
+function isNonEmptyStringAndNotWhitespace(value) {
+    return isString(value) && !isEmptyStringOrWhitespace(value);
+}
+// eslint-disable-next-line @typescript-eslint/ban-types
+function isNull(value) {
+    return value === null;
+}
+// eslint-disable-next-line @typescript-eslint/ban-types
+function isNullOrUndefined(value) {
+    return isNull(value) || isUndefined(value);
+}
+function isNumber(value) {
+    return typeof value === 'number' && !Number.isNaN(value);
+}
+function isNumericString(value) {
+    return isString(value) && !isEmptyStringOrWhitespace(value) && !Number.isNaN(Number(value));
+}
+// eslint-disable-next-line @typescript-eslint/ban-types
+function isObject(value) {
+    return !isNull(value) && (typeof value === 'object' || isFunction(value));
+}
+function isObservable(value) {
     if (!value) {
         return false;
     }
@@ -38122,191 +38521,794 @@ is.observable = (value) => {
         return true;
     }
     return false;
-};
-is.nodeStream = (value) => is.object(value) && is.function_(value.pipe) && !is.observable(value);
-is.infinite = (value) => value === Number.POSITIVE_INFINITY || value === Number.NEGATIVE_INFINITY;
-const isAbsoluteMod2 = (remainder) => (value) => is.integer(value) && Math.abs(value % 2) === remainder;
-is.evenInteger = isAbsoluteMod2(0);
-is.oddInteger = isAbsoluteMod2(1);
-is.emptyArray = (value) => is.array(value) && value.length === 0;
-is.nonEmptyArray = (value) => is.array(value) && value.length > 0;
-is.emptyString = (value) => is.string(value) && value.length === 0;
-const isWhiteSpaceString = (value) => is.string(value) && !/\S/.test(value);
-is.emptyStringOrWhitespace = (value) => is.emptyString(value) || isWhiteSpaceString(value);
-// TODO: Use `not ''` when the `not` operator is available.
-is.nonEmptyString = (value) => is.string(value) && value.length > 0;
-// TODO: Use `not ''` when the `not` operator is available.
-is.nonEmptyStringAndNotWhitespace = (value) => is.string(value) && !is.emptyStringOrWhitespace(value);
-// eslint-disable-next-line unicorn/no-array-callback-reference
-is.emptyObject = (value) => is.object(value) && !is.map(value) && !is.set(value) && Object.keys(value).length === 0;
-// TODO: Use `not` operator here to remove `Map` and `Set` from type guard:
-// - https://github.com/Microsoft/TypeScript/pull/29317
-// eslint-disable-next-line unicorn/no-array-callback-reference
-is.nonEmptyObject = (value) => is.object(value) && !is.map(value) && !is.set(value) && Object.keys(value).length > 0;
-is.emptySet = (value) => is.set(value) && value.size === 0;
-is.nonEmptySet = (value) => is.set(value) && value.size > 0;
-// eslint-disable-next-line unicorn/no-array-callback-reference
-is.emptyMap = (value) => is.map(value) && value.size === 0;
-// eslint-disable-next-line unicorn/no-array-callback-reference
-is.nonEmptyMap = (value) => is.map(value) && value.size > 0;
+}
+function isOddInteger(value) {
+    return isAbsoluteMod2(1)(value);
+}
+function isPlainObject(value) {
+    // From: https://github.com/sindresorhus/is-plain-obj/blob/main/index.js
+    if (typeof value !== 'object' || value === null) {
+        return false;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const prototype = Object.getPrototypeOf(value);
+    return (prototype === null || prototype === Object.prototype || Object.getPrototypeOf(prototype) === null) && !(Symbol.toStringTag in value) && !(Symbol.iterator in value);
+}
+function isPositiveNumber(value) {
+    return isNumber(value) && value > 0;
+}
+function isPrimitive(value) {
+    return isNull(value) || isPrimitiveTypeName(typeof value);
+}
+function isPromise(value) {
+    return isNativePromise(value) || hasPromiseApi(value);
+}
 // `PropertyKey` is any value that can be used as an object key (string, number, or symbol)
-is.propertyKey = (value) => is.any([is.string, is.number, is.symbol], value);
-is.formData = (value) => isObjectOfType('FormData')(value);
-is.urlSearchParams = (value) => isObjectOfType('URLSearchParams')(value);
-const predicateOnArray = (method, predicate, values) => {
-    if (!is.function_(predicate)) {
+function isPropertyKey(value) {
+    return isAny([isString, isNumber, isSymbol], value);
+}
+function isRegExp(value) {
+    return getObjectType(value) === 'RegExp';
+}
+function isSafeInteger(value) {
+    return Number.isSafeInteger(value);
+}
+function isSet(value) {
+    return getObjectType(value) === 'Set';
+}
+function isSharedArrayBuffer(value) {
+    return getObjectType(value) === 'SharedArrayBuffer';
+}
+function isString(value) {
+    return typeof value === 'string';
+}
+function isSymbol(value) {
+    return typeof value === 'symbol';
+}
+// Example: `is.truthy = (value: unknown): value is (not false | not 0 | not '' | not undefined | not null) => Boolean(value);`
+// eslint-disable-next-line unicorn/prefer-native-coercion-functions
+function isTruthy(value) {
+    return Boolean(value);
+}
+function isTupleLike(value, guards) {
+    if (isArray(guards) && isArray(value) && guards.length === value.length) {
+        return guards.every((guard, index) => guard(value[index]));
+    }
+    return false;
+}
+function isTypedArray(value) {
+    return isTypedArrayName(getObjectType(value));
+}
+function isUint16Array(value) {
+    return getObjectType(value) === 'Uint16Array';
+}
+function isUint32Array(value) {
+    return getObjectType(value) === 'Uint32Array';
+}
+function isUint8Array(value) {
+    return getObjectType(value) === 'Uint8Array';
+}
+function isUint8ClampedArray(value) {
+    return getObjectType(value) === 'Uint8ClampedArray';
+}
+function isUndefined(value) {
+    return value === undefined;
+}
+function isUrlInstance(value) {
+    return getObjectType(value) === 'URL';
+}
+// eslint-disable-next-line unicorn/prevent-abbreviations
+function isUrlSearchParams(value) {
+    return getObjectType(value) === 'URLSearchParams';
+}
+function isUrlString(value) {
+    if (!isString(value)) {
+        return false;
+    }
+    try {
+        new URL(value); // eslint-disable-line no-new
+        return true;
+    }
+    catch {
+        return false;
+    }
+}
+function isValidLength(value) {
+    return isSafeInteger(value) && value >= 0;
+}
+// eslint-disable-next-line @typescript-eslint/ban-types
+function isWeakMap(value) {
+    return getObjectType(value) === 'WeakMap';
+}
+// eslint-disable-next-line @typescript-eslint/ban-types
+function isWeakRef(value) {
+    return getObjectType(value) === 'WeakRef';
+}
+// eslint-disable-next-line @typescript-eslint/ban-types
+function isWeakSet(value) {
+    return getObjectType(value) === 'WeakSet';
+}
+function isWhitespaceString(value) {
+    return isString(value) && /^\s+$/.test(value);
+}
+function predicateOnArray(method, predicate, values) {
+    if (!isFunction(predicate)) {
         throw new TypeError(`Invalid predicate: ${JSON.stringify(predicate)}`);
     }
     if (values.length === 0) {
         throw new TypeError('Invalid number of values');
     }
     return method.call(values, predicate);
-};
-is.any = (predicate, ...values) => {
-    const predicates = is.array(predicate) ? predicate : [predicate];
-    return predicates.some(singlePredicate => predicateOnArray(Array.prototype.some, singlePredicate, values));
-};
-is.all = (predicate, ...values) => predicateOnArray(Array.prototype.every, predicate, values);
-const assertType = (condition, description, value, options = {}) => {
-    if (!condition) {
-        const { multipleValues } = options;
-        const valuesMessage = multipleValues
-            ? `received values of types ${[
-                ...new Set(value.map(singleValue => `\`${is(singleValue)}\``)),
-            ].join(', ')}`
-            : `received value of type \`${is(value)}\``;
-        throw new TypeError(`Expected value which is \`${description}\`, ${valuesMessage}.`);
-    }
-};
-/* eslint-disable @typescript-eslint/no-confusing-void-expression */
+}
+function typeErrorMessage(description, value) {
+    return `Expected value which is \`${description}\`, received value of type \`${is(value)}\`.`;
+}
+function unique(values) {
+    // eslint-disable-next-line unicorn/prefer-spread
+    return Array.from(new Set(values));
+}
+const andFormatter = new Intl.ListFormat('en', { style: 'long', type: 'conjunction' });
+const orFormatter = new Intl.ListFormat('en', { style: 'long', type: 'disjunction' });
+function typeErrorMessageMultipleValues(expectedType, values) {
+    const uniqueExpectedTypes = unique((isArray(expectedType) ? expectedType : [expectedType]).map(value => `\`${value}\``));
+    const uniqueValueTypes = unique(values.map(value => `\`${is(value)}\``));
+    return `Expected values which are ${orFormatter.format(uniqueExpectedTypes)}. Received values of type${uniqueValueTypes.length > 1 ? 's' : ''} ${andFormatter.format(uniqueValueTypes)}.`;
+}
 const assert = {
-    // Unknowns.
-    undefined: (value) => assertType(is.undefined(value), 'undefined', value),
-    string: (value) => assertType(is.string(value), 'string', value),
-    number: (value) => assertType(is.number(value), 'number', value),
-    positiveNumber: (value) => assertType(is.positiveNumber(value), "positive number" /* AssertionTypeDescription.positiveNumber */, value),
-    negativeNumber: (value) => assertType(is.negativeNumber(value), "negative number" /* AssertionTypeDescription.negativeNumber */, value),
-    bigint: (value) => assertType(is.bigint(value), 'bigint', value),
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    function_: (value) => assertType(is.function_(value), 'Function', value),
-    null_: (value) => assertType(is.null_(value), 'null', value),
-    class_: (value) => assertType(is.class_(value), "Class" /* AssertionTypeDescription.class_ */, value),
-    boolean: (value) => assertType(is.boolean(value), 'boolean', value),
-    symbol: (value) => assertType(is.symbol(value), 'symbol', value),
-    numericString: (value) => assertType(is.numericString(value), "string with a number" /* AssertionTypeDescription.numericString */, value),
-    array: (value, assertion) => {
-        const assert = assertType;
-        assert(is.array(value), 'Array', value);
-        if (assertion) {
-            // eslint-disable-next-line unicorn/no-array-for-each, unicorn/no-array-callback-reference
-            value.forEach(assertion);
-        }
-    },
-    buffer: (value) => assertType(is.buffer(value), 'Buffer', value),
-    blob: (value) => assertType(is.blob(value), 'Blob', value),
-    nullOrUndefined: (value) => assertType(is.nullOrUndefined(value), "null or undefined" /* AssertionTypeDescription.nullOrUndefined */, value),
-    object: (value) => assertType(is.object(value), 'Object', value),
-    iterable: (value) => assertType(is.iterable(value), "Iterable" /* AssertionTypeDescription.iterable */, value),
-    asyncIterable: (value) => assertType(is.asyncIterable(value), "AsyncIterable" /* AssertionTypeDescription.asyncIterable */, value),
-    generator: (value) => assertType(is.generator(value), 'Generator', value),
-    asyncGenerator: (value) => assertType(is.asyncGenerator(value), 'AsyncGenerator', value),
-    nativePromise: (value) => assertType(is.nativePromise(value), "native Promise" /* AssertionTypeDescription.nativePromise */, value),
-    promise: (value) => assertType(is.promise(value), 'Promise', value),
-    generatorFunction: (value) => assertType(is.generatorFunction(value), 'GeneratorFunction', value),
-    asyncGeneratorFunction: (value) => assertType(is.asyncGeneratorFunction(value), 'AsyncGeneratorFunction', value),
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    asyncFunction: (value) => assertType(is.asyncFunction(value), 'AsyncFunction', value),
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    boundFunction: (value) => assertType(is.boundFunction(value), 'Function', value),
-    regExp: (value) => assertType(is.regExp(value), 'RegExp', value),
-    date: (value) => assertType(is.date(value), 'Date', value),
-    error: (value) => assertType(is.error(value), 'Error', value),
-    map: (value) => assertType(is.map(value), 'Map', value),
-    set: (value) => assertType(is.set(value), 'Set', value),
-    weakMap: (value) => assertType(is.weakMap(value), 'WeakMap', value),
-    weakSet: (value) => assertType(is.weakSet(value), 'WeakSet', value),
-    weakRef: (value) => assertType(is.weakRef(value), 'WeakRef', value),
-    int8Array: (value) => assertType(is.int8Array(value), 'Int8Array', value),
-    uint8Array: (value) => assertType(is.uint8Array(value), 'Uint8Array', value),
-    uint8ClampedArray: (value) => assertType(is.uint8ClampedArray(value), 'Uint8ClampedArray', value),
-    int16Array: (value) => assertType(is.int16Array(value), 'Int16Array', value),
-    uint16Array: (value) => assertType(is.uint16Array(value), 'Uint16Array', value),
-    int32Array: (value) => assertType(is.int32Array(value), 'Int32Array', value),
-    uint32Array: (value) => assertType(is.uint32Array(value), 'Uint32Array', value),
-    float32Array: (value) => assertType(is.float32Array(value), 'Float32Array', value),
-    float64Array: (value) => assertType(is.float64Array(value), 'Float64Array', value),
-    bigInt64Array: (value) => assertType(is.bigInt64Array(value), 'BigInt64Array', value),
-    bigUint64Array: (value) => assertType(is.bigUint64Array(value), 'BigUint64Array', value),
-    arrayBuffer: (value) => assertType(is.arrayBuffer(value), 'ArrayBuffer', value),
-    sharedArrayBuffer: (value) => assertType(is.sharedArrayBuffer(value), 'SharedArrayBuffer', value),
-    dataView: (value) => assertType(is.dataView(value), 'DataView', value),
-    enumCase: (value, targetEnum) => assertType(is.enumCase(value, targetEnum), 'EnumCase', value),
-    urlInstance: (value) => assertType(is.urlInstance(value), 'URL', value),
-    urlString: (value) => assertType(is.urlString(value), "string with a URL" /* AssertionTypeDescription.urlString */, value),
-    truthy: (value) => assertType(is.truthy(value), "truthy" /* AssertionTypeDescription.truthy */, value),
-    falsy: (value) => assertType(is.falsy(value), "falsy" /* AssertionTypeDescription.falsy */, value),
-    nan: (value) => assertType(is.nan(value), "NaN" /* AssertionTypeDescription.nan */, value),
-    primitive: (value) => assertType(is.primitive(value), "primitive" /* AssertionTypeDescription.primitive */, value),
-    integer: (value) => assertType(is.integer(value), "integer" /* AssertionTypeDescription.integer */, value),
-    safeInteger: (value) => assertType(is.safeInteger(value), "integer" /* AssertionTypeDescription.safeInteger */, value),
-    plainObject: (value) => assertType(is.plainObject(value), "plain object" /* AssertionTypeDescription.plainObject */, value),
-    typedArray: (value) => assertType(is.typedArray(value), "TypedArray" /* AssertionTypeDescription.typedArray */, value),
-    arrayLike: (value) => assertType(is.arrayLike(value), "array-like" /* AssertionTypeDescription.arrayLike */, value),
-    tupleLike: (value, guards) => assertType(is.tupleLike(value, guards), "tuple-like" /* AssertionTypeDescription.tupleLike */, value),
-    domElement: (value) => assertType(is.domElement(value), "HTMLElement" /* AssertionTypeDescription.domElement */, value),
-    observable: (value) => assertType(is.observable(value), 'Observable', value),
-    nodeStream: (value) => assertType(is.nodeStream(value), "Node.js Stream" /* AssertionTypeDescription.nodeStream */, value),
-    infinite: (value) => assertType(is.infinite(value), "infinite number" /* AssertionTypeDescription.infinite */, value),
-    emptyArray: (value) => assertType(is.emptyArray(value), "empty array" /* AssertionTypeDescription.emptyArray */, value),
-    nonEmptyArray: (value) => assertType(is.nonEmptyArray(value), "non-empty array" /* AssertionTypeDescription.nonEmptyArray */, value),
-    emptyString: (value) => assertType(is.emptyString(value), "empty string" /* AssertionTypeDescription.emptyString */, value),
-    emptyStringOrWhitespace: (value) => assertType(is.emptyStringOrWhitespace(value), "empty string or whitespace" /* AssertionTypeDescription.emptyStringOrWhitespace */, value),
-    nonEmptyString: (value) => assertType(is.nonEmptyString(value), "non-empty string" /* AssertionTypeDescription.nonEmptyString */, value),
-    nonEmptyStringAndNotWhitespace: (value) => assertType(is.nonEmptyStringAndNotWhitespace(value), "non-empty string and not whitespace" /* AssertionTypeDescription.nonEmptyStringAndNotWhitespace */, value),
-    emptyObject: (value) => assertType(is.emptyObject(value), "empty object" /* AssertionTypeDescription.emptyObject */, value),
-    nonEmptyObject: (value) => assertType(is.nonEmptyObject(value), "non-empty object" /* AssertionTypeDescription.nonEmptyObject */, value),
-    emptySet: (value) => assertType(is.emptySet(value), "empty set" /* AssertionTypeDescription.emptySet */, value),
-    nonEmptySet: (value) => assertType(is.nonEmptySet(value), "non-empty set" /* AssertionTypeDescription.nonEmptySet */, value),
-    emptyMap: (value) => assertType(is.emptyMap(value), "empty map" /* AssertionTypeDescription.emptyMap */, value),
-    nonEmptyMap: (value) => assertType(is.nonEmptyMap(value), "non-empty map" /* AssertionTypeDescription.nonEmptyMap */, value),
-    propertyKey: (value) => assertType(is.propertyKey(value), 'PropertyKey', value),
-    formData: (value) => assertType(is.formData(value), 'FormData', value),
-    urlSearchParams: (value) => assertType(is.urlSearchParams(value), 'URLSearchParams', value),
-    // Numbers.
-    evenInteger: (value) => assertType(is.evenInteger(value), "even integer" /* AssertionTypeDescription.evenInteger */, value),
-    oddInteger: (value) => assertType(is.oddInteger(value), "odd integer" /* AssertionTypeDescription.oddInteger */, value),
-    // Two arguments.
-    directInstanceOf: (instance, class_) => assertType(is.directInstanceOf(instance, class_), "T" /* AssertionTypeDescription.directInstanceOf */, instance),
-    inRange: (value, range) => assertType(is.inRange(value, range), "in range" /* AssertionTypeDescription.inRange */, value),
-    // Variadic functions.
-    any: (predicate, ...values) => assertType(is.any(predicate, ...values), "predicate returns truthy for any value" /* AssertionTypeDescription.any */, values, { multipleValues: true }),
-    all: (predicate, ...values) => assertType(is.all(predicate, ...values), "predicate returns truthy for all values" /* AssertionTypeDescription.all */, values, { multipleValues: true }),
+    all: assertAll,
+    any: assertAny,
+    array: assertArray,
+    arrayBuffer: assertArrayBuffer,
+    arrayLike: assertArrayLike,
+    asyncFunction: assertAsyncFunction,
+    asyncGenerator: assertAsyncGenerator,
+    asyncGeneratorFunction: assertAsyncGeneratorFunction,
+    asyncIterable: assertAsyncIterable,
+    bigint: assertBigint,
+    bigInt64Array: assertBigInt64Array,
+    bigUint64Array: assertBigUint64Array,
+    blob: assertBlob,
+    boolean: assertBoolean,
+    boundFunction: assertBoundFunction,
+    buffer: assertBuffer,
+    class: assertClass,
+    class_: assertClass,
+    dataView: assertDataView,
+    date: assertDate,
+    directInstanceOf: assertDirectInstanceOf,
+    domElement: assertHtmlElement,
+    emptyArray: assertEmptyArray,
+    emptyMap: assertEmptyMap,
+    emptyObject: assertEmptyObject,
+    emptySet: assertEmptySet,
+    emptyString: assertEmptyString,
+    emptyStringOrWhitespace: assertEmptyStringOrWhitespace,
+    enumCase: assertEnumCase,
+    error: assertError,
+    evenInteger: assertEvenInteger,
+    falsy: assertFalsy,
+    float32Array: assertFloat32Array,
+    float64Array: assertFloat64Array,
+    formData: assertFormData,
+    function: assertFunction,
+    function_: assertFunction,
+    generator: assertGenerator,
+    generatorFunction: assertGeneratorFunction,
+    htmlElement: assertHtmlElement,
+    infinite: assertInfinite,
+    inRange: assertInRange,
+    int16Array: assertInt16Array,
+    int32Array: assertInt32Array,
+    int8Array: assertInt8Array,
+    integer: assertInteger,
+    iterable: assertIterable,
+    map: assertMap,
+    nan: assertNan,
+    nativePromise: assertNativePromise,
+    negativeNumber: assertNegativeNumber,
+    nodeStream: assertNodeStream,
+    nonEmptyArray: assertNonEmptyArray,
+    nonEmptyMap: assertNonEmptyMap,
+    nonEmptyObject: assertNonEmptyObject,
+    nonEmptySet: assertNonEmptySet,
+    nonEmptyString: assertNonEmptyString,
+    nonEmptyStringAndNotWhitespace: assertNonEmptyStringAndNotWhitespace,
+    null: assertNull,
+    null_: assertNull,
+    nullOrUndefined: assertNullOrUndefined,
+    number: assertNumber,
+    numericString: assertNumericString,
+    object: assertObject,
+    observable: assertObservable,
+    oddInteger: assertOddInteger,
+    plainObject: assertPlainObject,
+    positiveNumber: assertPositiveNumber,
+    primitive: assertPrimitive,
+    promise: assertPromise,
+    propertyKey: assertPropertyKey,
+    regExp: assertRegExp,
+    safeInteger: assertSafeInteger,
+    set: assertSet,
+    sharedArrayBuffer: assertSharedArrayBuffer,
+    string: assertString,
+    symbol: assertSymbol,
+    truthy: assertTruthy,
+    tupleLike: assertTupleLike,
+    typedArray: assertTypedArray,
+    uint16Array: assertUint16Array,
+    uint32Array: assertUint32Array,
+    uint8Array: assertUint8Array,
+    uint8ClampedArray: assertUint8ClampedArray,
+    undefined: assertUndefined,
+    urlInstance: assertUrlInstance,
+    urlSearchParams: assertUrlSearchParams,
+    urlString: assertUrlString,
+    validLength: assertValidLength,
+    weakMap: assertWeakMap,
+    weakRef: assertWeakRef,
+    weakSet: assertWeakSet,
+    whitespaceString: assertWhitespaceString,
 };
-/* eslint-enable @typescript-eslint/no-confusing-void-expression */
-// Some few keywords are reserved, but we'll populate them for Node.js users
-// See https://github.com/Microsoft/TypeScript/issues/2536
-Object.defineProperties(is, {
-    class: {
-        value: is.class_,
-    },
-    function: {
-        value: is.function_,
-    },
-    null: {
-        value: is.null_,
-    },
-});
-Object.defineProperties(assert, {
-    class: {
-        value: assert.class_,
-    },
-    function: {
-        value: assert.function_,
-    },
-    null: {
-        value: assert.null_,
-    },
-});
+const methodTypeMap = {
+    isArray: 'Array',
+    isArrayBuffer: 'ArrayBuffer',
+    isArrayLike: 'array-like',
+    isAsyncFunction: 'AsyncFunction',
+    isAsyncGenerator: 'AsyncGenerator',
+    isAsyncGeneratorFunction: 'AsyncGeneratorFunction',
+    isAsyncIterable: 'AsyncIterable',
+    isBigint: 'bigint',
+    isBigInt64Array: 'BigInt64Array',
+    isBigUint64Array: 'BigUint64Array',
+    isBlob: 'Blob',
+    isBoolean: 'boolean',
+    isBoundFunction: 'Function',
+    isBuffer: 'Buffer',
+    isClass: 'Class',
+    isDataView: 'DataView',
+    isDate: 'Date',
+    isDirectInstanceOf: 'T',
+    /** @deprecated */
+    isDomElement: 'HTMLElement',
+    isEmptyArray: 'empty array',
+    isEmptyMap: 'empty map',
+    isEmptyObject: 'empty object',
+    isEmptySet: 'empty set',
+    isEmptyString: 'empty string',
+    isEmptyStringOrWhitespace: 'empty string or whitespace',
+    isEnumCase: 'EnumCase',
+    isError: 'Error',
+    isEvenInteger: 'even integer',
+    isFalsy: 'falsy',
+    isFloat32Array: 'Float32Array',
+    isFloat64Array: 'Float64Array',
+    isFormData: 'FormData',
+    isFunction: 'Function',
+    isGenerator: 'Generator',
+    isGeneratorFunction: 'GeneratorFunction',
+    isHtmlElement: 'HTMLElement',
+    isInfinite: 'infinite number',
+    isInRange: 'in range',
+    isInt16Array: 'Int16Array',
+    isInt32Array: 'Int32Array',
+    isInt8Array: 'Int8Array',
+    isInteger: 'integer',
+    isIterable: 'Iterable',
+    isMap: 'Map',
+    isNan: 'NaN',
+    isNativePromise: 'native Promise',
+    isNegativeNumber: 'negative number',
+    isNodeStream: 'Node.js Stream',
+    isNonEmptyArray: 'non-empty array',
+    isNonEmptyMap: 'non-empty map',
+    isNonEmptyObject: 'non-empty object',
+    isNonEmptySet: 'non-empty set',
+    isNonEmptyString: 'non-empty string',
+    isNonEmptyStringAndNotWhitespace: 'non-empty string and not whitespace',
+    isNull: 'null',
+    isNullOrUndefined: 'null or undefined',
+    isNumber: 'number',
+    isNumericString: 'string with a number',
+    isObject: 'Object',
+    isObservable: 'Observable',
+    isOddInteger: 'odd integer',
+    isPlainObject: 'plain object',
+    isPositiveNumber: 'positive number',
+    isPrimitive: 'primitive',
+    isPromise: 'Promise',
+    isPropertyKey: 'PropertyKey',
+    isRegExp: 'RegExp',
+    isSafeInteger: 'integer',
+    isSet: 'Set',
+    isSharedArrayBuffer: 'SharedArrayBuffer',
+    isString: 'string',
+    isSymbol: 'symbol',
+    isTruthy: 'truthy',
+    isTupleLike: 'tuple-like',
+    isTypedArray: 'TypedArray',
+    isUint16Array: 'Uint16Array',
+    isUint32Array: 'Uint32Array',
+    isUint8Array: 'Uint8Array',
+    isUint8ClampedArray: 'Uint8ClampedArray',
+    isUndefined: 'undefined',
+    isUrlInstance: 'URL',
+    isUrlSearchParams: 'URLSearchParams',
+    isUrlString: 'string with a URL',
+    isValidLength: 'valid length',
+    isWeakMap: 'WeakMap',
+    isWeakRef: 'WeakRef',
+    isWeakSet: 'WeakSet',
+    isWhitespaceString: 'whitespace string',
+};
+function keysOf(value) {
+    return Object.keys(value);
+}
+const isMethodNames = keysOf(methodTypeMap);
+function isIsMethodName(value) {
+    return isMethodNames.includes(value);
+}
+function assertAll(predicate, ...values) {
+    if (!isAll(predicate, ...values)) {
+        const expectedType = isIsMethodName(predicate.name) ? methodTypeMap[predicate.name] : 'predicate returns truthy for all values';
+        throw new TypeError(typeErrorMessageMultipleValues(expectedType, values));
+    }
+}
+function assertAny(predicate, ...values) {
+    if (!isAny(predicate, ...values)) {
+        const predicates = isArray(predicate) ? predicate : [predicate];
+        const expectedTypes = predicates.map(predicate => isIsMethodName(predicate.name) ? methodTypeMap[predicate.name] : 'predicate returns truthy for any value');
+        throw new TypeError(typeErrorMessageMultipleValues(expectedTypes, values));
+    }
+}
+function assertArray(value, assertion) {
+    if (!isArray(value)) {
+        throw new TypeError(typeErrorMessage('Array', value));
+    }
+    if (assertion) {
+        // eslint-disable-next-line unicorn/no-array-for-each, unicorn/no-array-callback-reference
+        value.forEach(assertion);
+    }
+}
+function assertArrayBuffer(value) {
+    if (!isArrayBuffer(value)) {
+        throw new TypeError(typeErrorMessage('ArrayBuffer', value));
+    }
+}
+function assertArrayLike(value) {
+    if (!isArrayLike(value)) {
+        throw new TypeError(typeErrorMessage('array-like', value));
+    }
+}
+// eslint-disable-next-line @typescript-eslint/ban-types
+function assertAsyncFunction(value) {
+    if (!isAsyncFunction(value)) {
+        throw new TypeError(typeErrorMessage('AsyncFunction', value));
+    }
+}
+function assertAsyncGenerator(value) {
+    if (!isAsyncGenerator(value)) {
+        throw new TypeError(typeErrorMessage('AsyncGenerator', value));
+    }
+}
+function assertAsyncGeneratorFunction(value) {
+    if (!isAsyncGeneratorFunction(value)) {
+        throw new TypeError(typeErrorMessage('AsyncGeneratorFunction', value));
+    }
+}
+function assertAsyncIterable(value) {
+    if (!isAsyncIterable(value)) {
+        throw new TypeError(typeErrorMessage('AsyncIterable', value));
+    }
+}
+function assertBigint(value) {
+    if (!isBigint(value)) {
+        throw new TypeError(typeErrorMessage('bigint', value));
+    }
+}
+function assertBigInt64Array(value) {
+    if (!isBigInt64Array(value)) {
+        throw new TypeError(typeErrorMessage('BigInt64Array', value));
+    }
+}
+function assertBigUint64Array(value) {
+    if (!isBigUint64Array(value)) {
+        throw new TypeError(typeErrorMessage('BigUint64Array', value));
+    }
+}
+function assertBlob(value) {
+    if (!isBlob(value)) {
+        throw new TypeError(typeErrorMessage('Blob', value));
+    }
+}
+function assertBoolean(value) {
+    if (!isBoolean(value)) {
+        throw new TypeError(typeErrorMessage('boolean', value));
+    }
+}
+// eslint-disable-next-line @typescript-eslint/ban-types
+function assertBoundFunction(value) {
+    if (!isBoundFunction(value)) {
+        throw new TypeError(typeErrorMessage('Function', value));
+    }
+}
+function assertBuffer(value) {
+    if (!isBuffer(value)) {
+        throw new TypeError(typeErrorMessage('Buffer', value));
+    }
+}
+function assertClass(value) {
+    if (!isClass(value)) {
+        throw new TypeError(typeErrorMessage('Class', value));
+    }
+}
+function assertDataView(value) {
+    if (!isDataView(value)) {
+        throw new TypeError(typeErrorMessage('DataView', value));
+    }
+}
+function assertDate(value) {
+    if (!isDate(value)) {
+        throw new TypeError(typeErrorMessage('Date', value));
+    }
+}
+function assertDirectInstanceOf(instance, class_) {
+    if (!isDirectInstanceOf(instance, class_)) {
+        throw new TypeError(typeErrorMessage('T', instance));
+    }
+}
+function assertEmptyArray(value) {
+    if (!isEmptyArray(value)) {
+        throw new TypeError(typeErrorMessage('empty array', value));
+    }
+}
+function assertEmptyMap(value) {
+    if (!isEmptyMap(value)) {
+        throw new TypeError(typeErrorMessage('empty map', value));
+    }
+}
+function assertEmptyObject(value) {
+    if (!isEmptyObject(value)) {
+        throw new TypeError(typeErrorMessage('empty object', value));
+    }
+}
+function assertEmptySet(value) {
+    if (!isEmptySet(value)) {
+        throw new TypeError(typeErrorMessage('empty set', value));
+    }
+}
+function assertEmptyString(value) {
+    if (!isEmptyString(value)) {
+        throw new TypeError(typeErrorMessage('empty string', value));
+    }
+}
+function assertEmptyStringOrWhitespace(value) {
+    if (!isEmptyStringOrWhitespace(value)) {
+        throw new TypeError(typeErrorMessage('empty string or whitespace', value));
+    }
+}
+function assertEnumCase(value, targetEnum) {
+    if (!isEnumCase(value, targetEnum)) {
+        throw new TypeError(typeErrorMessage('EnumCase', value));
+    }
+}
+function assertError(value) {
+    if (!isError(value)) {
+        throw new TypeError(typeErrorMessage('Error', value));
+    }
+}
+function assertEvenInteger(value) {
+    if (!isEvenInteger(value)) {
+        throw new TypeError(typeErrorMessage('even integer', value));
+    }
+}
+function assertFalsy(value) {
+    if (!isFalsy(value)) {
+        throw new TypeError(typeErrorMessage('falsy', value));
+    }
+}
+function assertFloat32Array(value) {
+    if (!isFloat32Array(value)) {
+        throw new TypeError(typeErrorMessage('Float32Array', value));
+    }
+}
+function assertFloat64Array(value) {
+    if (!isFloat64Array(value)) {
+        throw new TypeError(typeErrorMessage('Float64Array', value));
+    }
+}
+function assertFormData(value) {
+    if (!isFormData(value)) {
+        throw new TypeError(typeErrorMessage('FormData', value));
+    }
+}
+// eslint-disable-next-line @typescript-eslint/ban-types
+function assertFunction(value) {
+    if (!isFunction(value)) {
+        throw new TypeError(typeErrorMessage('Function', value));
+    }
+}
+function assertGenerator(value) {
+    if (!isGenerator(value)) {
+        throw new TypeError(typeErrorMessage('Generator', value));
+    }
+}
+function assertGeneratorFunction(value) {
+    if (!isGeneratorFunction(value)) {
+        throw new TypeError(typeErrorMessage('GeneratorFunction', value));
+    }
+}
+function assertHtmlElement(value) {
+    if (!isHtmlElement(value)) {
+        throw new TypeError(typeErrorMessage('HTMLElement', value));
+    }
+}
+function assertInfinite(value) {
+    if (!isInfinite(value)) {
+        throw new TypeError(typeErrorMessage('infinite number', value));
+    }
+}
+function assertInRange(value, range) {
+    if (!isInRange(value, range)) {
+        throw new TypeError(typeErrorMessage('in range', value));
+    }
+}
+function assertInt16Array(value) {
+    if (!isInt16Array(value)) {
+        throw new TypeError(typeErrorMessage('Int16Array', value));
+    }
+}
+function assertInt32Array(value) {
+    if (!isInt32Array(value)) {
+        throw new TypeError(typeErrorMessage('Int32Array', value));
+    }
+}
+function assertInt8Array(value) {
+    if (!isInt8Array(value)) {
+        throw new TypeError(typeErrorMessage('Int8Array', value));
+    }
+}
+function assertInteger(value) {
+    if (!isInteger(value)) {
+        throw new TypeError(typeErrorMessage('integer', value));
+    }
+}
+function assertIterable(value) {
+    if (!isIterable(value)) {
+        throw new TypeError(typeErrorMessage('Iterable', value));
+    }
+}
+function assertMap(value) {
+    if (!isMap(value)) {
+        throw new TypeError(typeErrorMessage('Map', value));
+    }
+}
+function assertNan(value) {
+    if (!isNan(value)) {
+        throw new TypeError(typeErrorMessage('NaN', value));
+    }
+}
+function assertNativePromise(value) {
+    if (!isNativePromise(value)) {
+        throw new TypeError(typeErrorMessage('native Promise', value));
+    }
+}
+function assertNegativeNumber(value) {
+    if (!isNegativeNumber(value)) {
+        throw new TypeError(typeErrorMessage('negative number', value));
+    }
+}
+function assertNodeStream(value) {
+    if (!isNodeStream(value)) {
+        throw new TypeError(typeErrorMessage('Node.js Stream', value));
+    }
+}
+function assertNonEmptyArray(value) {
+    if (!isNonEmptyArray(value)) {
+        throw new TypeError(typeErrorMessage('non-empty array', value));
+    }
+}
+function assertNonEmptyMap(value) {
+    if (!isNonEmptyMap(value)) {
+        throw new TypeError(typeErrorMessage('non-empty map', value));
+    }
+}
+function assertNonEmptyObject(value) {
+    if (!isNonEmptyObject(value)) {
+        throw new TypeError(typeErrorMessage('non-empty object', value));
+    }
+}
+function assertNonEmptySet(value) {
+    if (!isNonEmptySet(value)) {
+        throw new TypeError(typeErrorMessage('non-empty set', value));
+    }
+}
+function assertNonEmptyString(value) {
+    if (!isNonEmptyString(value)) {
+        throw new TypeError(typeErrorMessage('non-empty string', value));
+    }
+}
+function assertNonEmptyStringAndNotWhitespace(value) {
+    if (!isNonEmptyStringAndNotWhitespace(value)) {
+        throw new TypeError(typeErrorMessage('non-empty string and not whitespace', value));
+    }
+}
+// eslint-disable-next-line @typescript-eslint/ban-types
+function assertNull(value) {
+    if (!isNull(value)) {
+        throw new TypeError(typeErrorMessage('null', value));
+    }
+}
+// eslint-disable-next-line @typescript-eslint/ban-types
+function assertNullOrUndefined(value) {
+    if (!isNullOrUndefined(value)) {
+        throw new TypeError(typeErrorMessage('null or undefined', value));
+    }
+}
+function assertNumber(value) {
+    if (!isNumber(value)) {
+        throw new TypeError(typeErrorMessage('number', value));
+    }
+}
+function assertNumericString(value) {
+    if (!isNumericString(value)) {
+        throw new TypeError(typeErrorMessage('string with a number', value));
+    }
+}
+// eslint-disable-next-line @typescript-eslint/ban-types
+function assertObject(value) {
+    if (!isObject(value)) {
+        throw new TypeError(typeErrorMessage('Object', value));
+    }
+}
+function assertObservable(value) {
+    if (!isObservable(value)) {
+        throw new TypeError(typeErrorMessage('Observable', value));
+    }
+}
+function assertOddInteger(value) {
+    if (!isOddInteger(value)) {
+        throw new TypeError(typeErrorMessage('odd integer', value));
+    }
+}
+function assertPlainObject(value) {
+    if (!isPlainObject(value)) {
+        throw new TypeError(typeErrorMessage('plain object', value));
+    }
+}
+function assertPositiveNumber(value) {
+    if (!isPositiveNumber(value)) {
+        throw new TypeError(typeErrorMessage('positive number', value));
+    }
+}
+function assertPrimitive(value) {
+    if (!isPrimitive(value)) {
+        throw new TypeError(typeErrorMessage('primitive', value));
+    }
+}
+function assertPromise(value) {
+    if (!isPromise(value)) {
+        throw new TypeError(typeErrorMessage('Promise', value));
+    }
+}
+function assertPropertyKey(value) {
+    if (!isPropertyKey(value)) {
+        throw new TypeError(typeErrorMessage('PropertyKey', value));
+    }
+}
+function assertRegExp(value) {
+    if (!isRegExp(value)) {
+        throw new TypeError(typeErrorMessage('RegExp', value));
+    }
+}
+function assertSafeInteger(value) {
+    if (!isSafeInteger(value)) {
+        throw new TypeError(typeErrorMessage('integer', value));
+    }
+}
+function assertSet(value) {
+    if (!isSet(value)) {
+        throw new TypeError(typeErrorMessage('Set', value));
+    }
+}
+function assertSharedArrayBuffer(value) {
+    if (!isSharedArrayBuffer(value)) {
+        throw new TypeError(typeErrorMessage('SharedArrayBuffer', value));
+    }
+}
+function assertString(value) {
+    if (!isString(value)) {
+        throw new TypeError(typeErrorMessage('string', value));
+    }
+}
+function assertSymbol(value) {
+    if (!isSymbol(value)) {
+        throw new TypeError(typeErrorMessage('symbol', value));
+    }
+}
+function assertTruthy(value) {
+    if (!isTruthy(value)) {
+        throw new TypeError(typeErrorMessage('truthy', value));
+    }
+}
+function assertTupleLike(value, guards) {
+    if (!isTupleLike(value, guards)) {
+        throw new TypeError(typeErrorMessage('tuple-like', value));
+    }
+}
+function assertTypedArray(value) {
+    if (!isTypedArray(value)) {
+        throw new TypeError(typeErrorMessage('TypedArray', value));
+    }
+}
+function assertUint16Array(value) {
+    if (!isUint16Array(value)) {
+        throw new TypeError(typeErrorMessage('Uint16Array', value));
+    }
+}
+function assertUint32Array(value) {
+    if (!isUint32Array(value)) {
+        throw new TypeError(typeErrorMessage('Uint32Array', value));
+    }
+}
+function assertUint8Array(value) {
+    if (!isUint8Array(value)) {
+        throw new TypeError(typeErrorMessage('Uint8Array', value));
+    }
+}
+function assertUint8ClampedArray(value) {
+    if (!isUint8ClampedArray(value)) {
+        throw new TypeError(typeErrorMessage('Uint8ClampedArray', value));
+    }
+}
+function assertUndefined(value) {
+    if (!isUndefined(value)) {
+        throw new TypeError(typeErrorMessage('undefined', value));
+    }
+}
+function assertUrlInstance(value) {
+    if (!isUrlInstance(value)) {
+        throw new TypeError(typeErrorMessage('URL', value));
+    }
+}
+// eslint-disable-next-line unicorn/prevent-abbreviations
+function assertUrlSearchParams(value) {
+    if (!isUrlSearchParams(value)) {
+        throw new TypeError(typeErrorMessage('URLSearchParams', value));
+    }
+}
+function assertUrlString(value) {
+    if (!isUrlString(value)) {
+        throw new TypeError(typeErrorMessage('string with a URL', value));
+    }
+}
+function assertValidLength(value) {
+    if (!isValidLength(value)) {
+        throw new TypeError(typeErrorMessage('valid length', value));
+    }
+}
+// eslint-disable-next-line @typescript-eslint/ban-types
+function assertWeakMap(value) {
+    if (!isWeakMap(value)) {
+        throw new TypeError(typeErrorMessage('WeakMap', value));
+    }
+}
+// eslint-disable-next-line @typescript-eslint/ban-types
+function assertWeakRef(value) {
+    if (!isWeakRef(value)) {
+        throw new TypeError(typeErrorMessage('WeakRef', value));
+    }
+}
+// eslint-disable-next-line @typescript-eslint/ban-types
+function assertWeakSet(value) {
+    if (!isWeakSet(value)) {
+        throw new TypeError(typeErrorMessage('WeakSet', value));
+    }
+}
+function assertWhitespaceString(value) {
+    if (!isWhitespaceString(value)) {
+        throw new TypeError(typeErrorMessage('whitespace string', value));
+    }
+}
 /* harmony default export */ const dist = (is);
 
 // EXTERNAL MODULE: external "node:events"
@@ -38323,101 +39325,110 @@ class CancelError extends Error {
 	}
 }
 
-// TODO: Use private class fields when ESLint 8 is out.
+const promiseState = Object.freeze({
+	pending: Symbol('pending'),
+	canceled: Symbol('canceled'),
+	resolved: Symbol('resolved'),
+	rejected: Symbol('rejected'),
+});
 
 class PCancelable {
 	static fn(userFunction) {
-		return (...arguments_) => {
-			return new PCancelable((resolve, reject, onCancel) => {
-				arguments_.push(onCancel);
-				// eslint-disable-next-line promise/prefer-await-to-then
-				userFunction(...arguments_).then(resolve, reject);
-			});
-		};
+		return (...arguments_) => new PCancelable((resolve, reject, onCancel) => {
+			arguments_.push(onCancel);
+			userFunction(...arguments_).then(resolve, reject);
+		});
 	}
 
-	constructor(executor) {
-		this._cancelHandlers = [];
-		this._isPending = true;
-		this._isCanceled = false;
-		this._rejectOnCancel = true;
+	#cancelHandlers = [];
+	#rejectOnCancel = true;
+	#state = promiseState.pending;
+	#promise;
+	#reject;
 
-		this._promise = new Promise((resolve, reject) => {
-			this._reject = reject;
+	constructor(executor) {
+		this.#promise = new Promise((resolve, reject) => {
+			this.#reject = reject;
 
 			const onResolve = value => {
-				if (!this._isCanceled || !onCancel.shouldReject) {
-					this._isPending = false;
+				if (this.#state !== promiseState.canceled || !onCancel.shouldReject) {
 					resolve(value);
+					this.#setState(promiseState.resolved);
 				}
 			};
 
 			const onReject = error => {
-				this._isPending = false;
-				reject(error);
+				if (this.#state !== promiseState.canceled || !onCancel.shouldReject) {
+					reject(error);
+					this.#setState(promiseState.rejected);
+				}
 			};
 
 			const onCancel = handler => {
-				if (!this._isPending) {
-					throw new Error('The `onCancel` handler was attached after the promise settled.');
+				if (this.#state !== promiseState.pending) {
+					throw new Error(`The \`onCancel\` handler was attached after the promise ${this.#state.description}.`);
 				}
 
-				this._cancelHandlers.push(handler);
+				this.#cancelHandlers.push(handler);
 			};
 
 			Object.defineProperties(onCancel, {
 				shouldReject: {
-					get: () => this._rejectOnCancel,
+					get: () => this.#rejectOnCancel,
 					set: boolean => {
-						this._rejectOnCancel = boolean;
-					}
-				}
+						this.#rejectOnCancel = boolean;
+					},
+				},
 			});
 
 			executor(onResolve, onReject, onCancel);
 		});
 	}
 
+	// eslint-disable-next-line unicorn/no-thenable
 	then(onFulfilled, onRejected) {
-		// eslint-disable-next-line promise/prefer-await-to-then
-		return this._promise.then(onFulfilled, onRejected);
+		return this.#promise.then(onFulfilled, onRejected);
 	}
 
 	catch(onRejected) {
-		// eslint-disable-next-line promise/prefer-await-to-then
-		return this._promise.catch(onRejected);
+		return this.#promise.catch(onRejected);
 	}
 
 	finally(onFinally) {
-		// eslint-disable-next-line promise/prefer-await-to-then
-		return this._promise.finally(onFinally);
+		return this.#promise.finally(onFinally);
 	}
 
 	cancel(reason) {
-		if (!this._isPending || this._isCanceled) {
+		if (this.#state !== promiseState.pending) {
 			return;
 		}
 
-		this._isCanceled = true;
+		this.#setState(promiseState.canceled);
 
-		if (this._cancelHandlers.length > 0) {
+		if (this.#cancelHandlers.length > 0) {
 			try {
-				for (const handler of this._cancelHandlers) {
+				for (const handler of this.#cancelHandlers) {
 					handler();
 				}
 			} catch (error) {
-				this._reject(error);
+				this.#reject(error);
 				return;
 			}
 		}
 
-		if (this._rejectOnCancel) {
-			this._reject(new CancelError(reason));
+		if (this.#rejectOnCancel) {
+			this.#reject(new CancelError(reason));
 		}
 	}
 
 	get isCanceled() {
-		return this._isCanceled;
+		return this.#state === promiseState.canceled;
+	}
+
+	#setState(state) {
+		if (this.#state === promiseState.pending) {
+			this.#state = state;
+		}
 	}
 }
 
@@ -38434,44 +39445,14 @@ An error to be thrown when a request fails.
 Contains a `code` property with error class code, like `ECONNREFUSED`.
 */
 class RequestError extends Error {
+    input;
+    code;
+    stack;
+    response;
+    request;
+    timings;
     constructor(message, error, self) {
         super(message);
-        Object.defineProperty(this, "input", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "code", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "stack", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "response", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "request", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "timings", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
         Error.captureStackTrace(this, this.constructor);
         this.name = 'RequestError';
         this.code = error.code ?? 'ERR_GOT_REQUEST_ERROR';
@@ -38553,20 +39534,10 @@ An error to be thrown when the request is aborted due to a timeout.
 Includes an `event` and `timings` property.
 */
 class TimeoutError extends RequestError {
+    timings;
+    event;
     constructor(error, timings, request) {
         super(error.message, error, request);
-        Object.defineProperty(this, "timings", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "event", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
         this.name = 'TimeoutError';
         this.event = error.event;
         this.timings = timings;
@@ -39440,244 +40411,671 @@ const onResponse = 'onResponse';
 //# sourceMappingURL=index.js.map
 // EXTERNAL MODULE: ./node_modules/decompress-response/index.js
 var decompress_response = __nccwpck_require__(2391);
-;// CONCATENATED MODULE: ./node_modules/form-data-encoder/lib/util/isFunction.js
-const isFunction = (value) => (typeof value === "function");
+;// CONCATENATED MODULE: ./node_modules/got/node_modules/get-stream/source/contents.js
+const contents_getStreamContents = async (stream, {init, convertChunk, getSize, truncateChunk, addChunk, getFinalChunk, finalize}, {maxBuffer = Number.POSITIVE_INFINITY} = {}) => {
+	if (!contents_isAsyncIterable(stream)) {
+		throw new Error('The first argument must be a Readable, a ReadableStream, or an async iterable.');
+	}
 
-;// CONCATENATED MODULE: ./node_modules/form-data-encoder/lib/util/isFormData.js
+	const state = init();
+	state.length = 0;
 
-const isFormData = (value) => Boolean(value
-    && isFunction(value.constructor)
-    && value[Symbol.toStringTag] === "FormData"
-    && isFunction(value.append)
-    && isFunction(value.getAll)
-    && isFunction(value.entries)
-    && isFunction(value[Symbol.iterator]));
+	try {
+		for await (const chunk of stream) {
+			const chunkType = getChunkType(chunk);
+			const convertedChunk = convertChunk[chunkType](chunk, state);
+			appendChunk({convertedChunk, state, getSize, truncateChunk, addChunk, maxBuffer});
+		}
 
-;// CONCATENATED MODULE: ./node_modules/form-data-encoder/lib/util/getStreamIterator.js
+		appendFinalChunk({state, convertChunk, getSize, truncateChunk, addChunk, getFinalChunk, maxBuffer});
+		return finalize(state);
+	} catch (error) {
+		error.bufferedData = finalize(state);
+		throw error;
+	}
+};
 
-const isAsyncIterable = (value) => (isFunction(value[Symbol.asyncIterator]));
+const appendFinalChunk = ({state, getSize, truncateChunk, addChunk, getFinalChunk, maxBuffer}) => {
+	const convertedChunk = getFinalChunk(state);
+	if (convertedChunk !== undefined) {
+		appendChunk({convertedChunk, state, getSize, truncateChunk, addChunk, maxBuffer});
+	}
+};
+
+const appendChunk = ({convertedChunk, state, getSize, truncateChunk, addChunk, maxBuffer}) => {
+	const chunkSize = getSize(convertedChunk);
+	const newLength = state.length + chunkSize;
+
+	if (newLength <= maxBuffer) {
+		addNewChunk(convertedChunk, state, addChunk, newLength);
+		return;
+	}
+
+	const truncatedChunk = truncateChunk(convertedChunk, maxBuffer - state.length);
+
+	if (truncatedChunk !== undefined) {
+		addNewChunk(truncatedChunk, state, addChunk, maxBuffer);
+	}
+
+	throw new MaxBufferError();
+};
+
+const addNewChunk = (convertedChunk, state, addChunk, newLength) => {
+	state.contents = addChunk(convertedChunk, state, newLength);
+	state.length = newLength;
+};
+
+const contents_isAsyncIterable = stream => typeof stream === 'object' && stream !== null && typeof stream[Symbol.asyncIterator] === 'function';
+
+const getChunkType = chunk => {
+	const typeOfChunk = typeof chunk;
+
+	if (typeOfChunk === 'string') {
+		return 'string';
+	}
+
+	if (typeOfChunk !== 'object' || chunk === null) {
+		return 'others';
+	}
+
+	// eslint-disable-next-line n/prefer-global/buffer
+	if (globalThis.Buffer?.isBuffer(chunk)) {
+		return 'buffer';
+	}
+
+	const prototypeName = objectToString.call(chunk);
+
+	if (prototypeName === '[object ArrayBuffer]') {
+		return 'arrayBuffer';
+	}
+
+	if (prototypeName === '[object DataView]') {
+		return 'dataView';
+	}
+
+	if (
+		Number.isInteger(chunk.byteLength)
+		&& Number.isInteger(chunk.byteOffset)
+		&& objectToString.call(chunk.buffer) === '[object ArrayBuffer]'
+	) {
+		return 'typedArray';
+	}
+
+	return 'others';
+};
+
+const {toString: objectToString} = Object.prototype;
+
+class MaxBufferError extends Error {
+	name = 'MaxBufferError';
+
+	constructor() {
+		super('maxBuffer exceeded');
+	}
+}
+
+;// CONCATENATED MODULE: ./node_modules/got/node_modules/get-stream/source/utils.js
+const identity = value => value;
+
+const noop = () => undefined;
+
+const getContentsProp = ({contents}) => contents;
+
+const throwObjectStream = chunk => {
+	throw new Error(`Streams in object mode are not supported: ${String(chunk)}`);
+};
+
+const getLengthProp = convertedChunk => convertedChunk.length;
+
+;// CONCATENATED MODULE: ./node_modules/got/node_modules/get-stream/source/array.js
+
+
+
+async function getStreamAsArray(stream, options) {
+	return getStreamContents(stream, arrayMethods, options);
+}
+
+const initArray = () => ({contents: []});
+
+const increment = () => 1;
+
+const addArrayChunk = (convertedChunk, {contents}) => {
+	contents.push(convertedChunk);
+	return contents;
+};
+
+const arrayMethods = {
+	init: initArray,
+	convertChunk: {
+		string: identity,
+		buffer: identity,
+		arrayBuffer: identity,
+		dataView: identity,
+		typedArray: identity,
+		others: identity,
+	},
+	getSize: increment,
+	truncateChunk: noop,
+	addChunk: addArrayChunk,
+	getFinalChunk: noop,
+	finalize: getContentsProp,
+};
+
+;// CONCATENATED MODULE: ./node_modules/got/node_modules/get-stream/source/array-buffer.js
+
+
+
+async function getStreamAsArrayBuffer(stream, options) {
+	return contents_getStreamContents(stream, arrayBufferMethods, options);
+}
+
+const initArrayBuffer = () => ({contents: new ArrayBuffer(0)});
+
+const useTextEncoder = chunk => textEncoder.encode(chunk);
+const textEncoder = new TextEncoder();
+
+const useUint8Array = chunk => new Uint8Array(chunk);
+
+const useUint8ArrayWithOffset = chunk => new Uint8Array(chunk.buffer, chunk.byteOffset, chunk.byteLength);
+
+const truncateArrayBufferChunk = (convertedChunk, chunkSize) => convertedChunk.slice(0, chunkSize);
+
+// `contents` is an increasingly growing `Uint8Array`.
+const addArrayBufferChunk = (convertedChunk, {contents, length: previousLength}, length) => {
+	const newContents = hasArrayBufferResize() ? resizeArrayBuffer(contents, length) : resizeArrayBufferSlow(contents, length);
+	new Uint8Array(newContents).set(convertedChunk, previousLength);
+	return newContents;
+};
+
+// Without `ArrayBuffer.resize()`, `contents` size is always a power of 2.
+// This means its last bytes are zeroes (not stream data), which need to be
+// trimmed at the end with `ArrayBuffer.slice()`.
+const resizeArrayBufferSlow = (contents, length) => {
+	if (length <= contents.byteLength) {
+		return contents;
+	}
+
+	const arrayBuffer = new ArrayBuffer(getNewContentsLength(length));
+	new Uint8Array(arrayBuffer).set(new Uint8Array(contents), 0);
+	return arrayBuffer;
+};
+
+// With `ArrayBuffer.resize()`, `contents` size matches exactly the size of
+// the stream data. It does not include extraneous zeroes to trim at the end.
+// The underlying `ArrayBuffer` does allocate a number of bytes that is a power
+// of 2, but those bytes are only visible after calling `ArrayBuffer.resize()`.
+const resizeArrayBuffer = (contents, length) => {
+	if (length <= contents.maxByteLength) {
+		contents.resize(length);
+		return contents;
+	}
+
+	const arrayBuffer = new ArrayBuffer(length, {maxByteLength: getNewContentsLength(length)});
+	new Uint8Array(arrayBuffer).set(new Uint8Array(contents), 0);
+	return arrayBuffer;
+};
+
+// Retrieve the closest `length` that is both >= and a power of 2
+const getNewContentsLength = length => SCALE_FACTOR ** Math.ceil(Math.log(length) / Math.log(SCALE_FACTOR));
+
+const SCALE_FACTOR = 2;
+
+const finalizeArrayBuffer = ({contents, length}) => hasArrayBufferResize() ? contents : contents.slice(0, length);
+
+// `ArrayBuffer.slice()` is slow. When `ArrayBuffer.resize()` is available
+// (Node >=20.0.0, Safari >=16.4 and Chrome), we can use it instead.
+// eslint-disable-next-line no-warning-comments
+// TODO: remove after dropping support for Node 20.
+// eslint-disable-next-line no-warning-comments
+// TODO: use `ArrayBuffer.transferToFixedLength()` instead once it is available
+const hasArrayBufferResize = () => 'resize' in ArrayBuffer.prototype;
+
+const arrayBufferMethods = {
+	init: initArrayBuffer,
+	convertChunk: {
+		string: useTextEncoder,
+		buffer: useUint8Array,
+		arrayBuffer: useUint8Array,
+		dataView: useUint8ArrayWithOffset,
+		typedArray: useUint8ArrayWithOffset,
+		others: throwObjectStream,
+	},
+	getSize: getLengthProp,
+	truncateChunk: truncateArrayBufferChunk,
+	addChunk: addArrayBufferChunk,
+	getFinalChunk: noop,
+	finalize: finalizeArrayBuffer,
+};
+
+;// CONCATENATED MODULE: ./node_modules/got/node_modules/get-stream/source/buffer.js
+
+
+async function getStreamAsBuffer(stream, options) {
+	if (!('Buffer' in globalThis)) {
+		throw new Error('getStreamAsBuffer() is only supported in Node.js');
+	}
+
+	try {
+		return arrayBufferToNodeBuffer(await getStreamAsArrayBuffer(stream, options));
+	} catch (error) {
+		if (error.bufferedData !== undefined) {
+			error.bufferedData = arrayBufferToNodeBuffer(error.bufferedData);
+		}
+
+		throw error;
+	}
+}
+
+// eslint-disable-next-line n/prefer-global/buffer
+const arrayBufferToNodeBuffer = arrayBuffer => globalThis.Buffer.from(arrayBuffer);
+
+;// CONCATENATED MODULE: ./node_modules/got/node_modules/get-stream/source/string.js
+
+
+
+async function getStreamAsString(stream, options) {
+	return getStreamContents(stream, stringMethods, options);
+}
+
+const initString = () => ({contents: '', textDecoder: new TextDecoder()});
+
+const useTextDecoder = (chunk, {textDecoder}) => textDecoder.decode(chunk, {stream: true});
+
+const addStringChunk = (convertedChunk, {contents}) => contents + convertedChunk;
+
+const truncateStringChunk = (convertedChunk, chunkSize) => convertedChunk.slice(0, chunkSize);
+
+const getFinalStringChunk = ({textDecoder}) => {
+	const finalChunk = textDecoder.decode();
+	return finalChunk === '' ? undefined : finalChunk;
+};
+
+const stringMethods = {
+	init: initString,
+	convertChunk: {
+		string: identity,
+		buffer: useTextDecoder,
+		arrayBuffer: useTextDecoder,
+		dataView: useTextDecoder,
+		typedArray: useTextDecoder,
+		others: throwObjectStream,
+	},
+	getSize: getLengthProp,
+	truncateChunk: truncateStringChunk,
+	addChunk: addStringChunk,
+	getFinalChunk: getFinalStringChunk,
+	finalize: getContentsProp,
+};
+
+;// CONCATENATED MODULE: ./node_modules/got/node_modules/get-stream/source/index.js
+
+
+
+
+
+
+;// CONCATENATED MODULE: ./node_modules/form-data-encoder/lib/index.js
+var __accessCheck = (obj, member, msg) => {
+  if (!member.has(obj))
+    throw TypeError("Cannot " + msg);
+};
+var __privateGet = (obj, member, getter) => {
+  __accessCheck(obj, member, "read from private field");
+  return getter ? getter.call(obj) : member.get(obj);
+};
+var __privateAdd = (obj, member, value) => {
+  if (member.has(obj))
+    throw TypeError("Cannot add the same private member more than once");
+  member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
+};
+var __privateSet = (obj, member, value, setter) => {
+  __accessCheck(obj, member, "write to private field");
+  setter ? setter.call(obj, value) : member.set(obj, value);
+  return value;
+};
+var __privateMethod = (obj, member, method) => {
+  __accessCheck(obj, member, "access private method");
+  return method;
+};
+
+// src/util/isFunction.ts
+var lib_isFunction = (value) => typeof value === "function";
+
+// src/util/isAsyncIterable.ts
+var lib_isAsyncIterable = (value) => lib_isFunction(value[Symbol.asyncIterator]);
+
+// src/util/chunk.ts
+var MAX_CHUNK_SIZE = 65536;
+function* chunk(value) {
+  if (value.byteLength <= MAX_CHUNK_SIZE) {
+    yield value;
+    return;
+  }
+  let offset = 0;
+  while (offset < value.byteLength) {
+    const size = Math.min(value.byteLength - offset, MAX_CHUNK_SIZE);
+    const buffer = value.buffer.slice(offset, offset + size);
+    offset += buffer.byteLength;
+    yield new Uint8Array(buffer);
+  }
+}
+
+// src/util/getStreamIterator.ts
 async function* readStream(readable) {
-    const reader = readable.getReader();
-    while (true) {
-        const { done, value } = await reader.read();
-        if (done) {
-            break;
-        }
-        yield value;
+  const reader = readable.getReader();
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) {
+      break;
     }
+    yield value;
+  }
 }
-const getStreamIterator = (source) => {
-    if (isAsyncIterable(source)) {
-        return source;
-    }
-    if (isFunction(source.getReader)) {
-        return readStream(source);
-    }
-    throw new TypeError("Unsupported data source: Expected either ReadableStream or async iterable.");
+async function* chunkStream(stream) {
+  for await (const value of stream) {
+    yield* chunk(value);
+  }
+}
+var getStreamIterator = (source) => {
+  if (lib_isAsyncIterable(source)) {
+    return chunkStream(source);
+  }
+  if (lib_isFunction(source.getReader)) {
+    return chunkStream(readStream(source));
+  }
+  throw new TypeError(
+    "Unsupported data source: Expected either ReadableStream or async iterable."
+  );
 };
 
-;// CONCATENATED MODULE: ./node_modules/form-data-encoder/lib/util/createBoundary.js
-const alphabet = "abcdefghijklmnopqrstuvwxyz0123456789";
+// src/util/createBoundary.ts
+var alphabet = "abcdefghijklmnopqrstuvwxyz0123456789";
 function createBoundary() {
-    let size = 16;
-    let res = "";
-    while (size--) {
-        res += alphabet[(Math.random() * alphabet.length) << 0];
-    }
-    return res;
+  let size = 16;
+  let res = "";
+  while (size--) {
+    res += alphabet[Math.random() * alphabet.length << 0];
+  }
+  return res;
 }
 
-;// CONCATENATED MODULE: ./node_modules/form-data-encoder/lib/util/normalizeValue.js
-const normalizeValue = (value) => String(value)
-    .replace(/\r|\n/g, (match, i, str) => {
-    if ((match === "\r" && str[i + 1] !== "\n")
-        || (match === "\n" && str[i - 1] !== "\r")) {
-        return "\r\n";
-    }
-    return match;
+// src/util/normalizeValue.ts
+var normalizeValue = (value) => String(value).replace(/\r|\n/g, (match, i, str) => {
+  if (match === "\r" && str[i + 1] !== "\n" || match === "\n" && str[i - 1] !== "\r") {
+    return "\r\n";
+  }
+  return match;
 });
 
-;// CONCATENATED MODULE: ./node_modules/form-data-encoder/lib/util/isPlainObject.js
-const getType = (value) => (Object.prototype.toString.call(value).slice(8, -1).toLowerCase());
-function isPlainObject(value) {
-    if (getType(value) !== "object") {
-        return false;
-    }
-    const pp = Object.getPrototypeOf(value);
-    if (pp === null || pp === undefined) {
-        return true;
-    }
-    const Ctor = pp.constructor && pp.constructor.toString();
-    return Ctor === Object.toString();
+// src/util/isPlainObject.ts
+var getType = (value) => Object.prototype.toString.call(value).slice(8, -1).toLowerCase();
+function lib_isPlainObject(value) {
+  if (getType(value) !== "object") {
+    return false;
+  }
+  const pp = Object.getPrototypeOf(value);
+  if (pp === null || pp === void 0) {
+    return true;
+  }
+  const Ctor = pp.constructor && pp.constructor.toString();
+  return Ctor === Object.toString();
 }
 
-;// CONCATENATED MODULE: ./node_modules/form-data-encoder/lib/util/proxyHeaders.js
+// src/util/proxyHeaders.ts
 function getProperty(target, prop) {
-    if (typeof prop === "string") {
-        for (const [name, value] of Object.entries(target)) {
-            if (prop.toLowerCase() === name.toLowerCase()) {
-                return value;
-            }
-        }
+  if (typeof prop === "string") {
+    for (const [name, value] of Object.entries(target)) {
+      if (prop.toLowerCase() === name.toLowerCase()) {
+        return value;
+      }
     }
-    return undefined;
+  }
+  return void 0;
 }
-const proxyHeaders = (object) => new Proxy(object, {
+var proxyHeaders = (object) => new Proxy(
+  object,
+  {
     get: (target, prop) => getProperty(target, prop),
-    has: (target, prop) => getProperty(target, prop) !== undefined
-});
+    has: (target, prop) => getProperty(target, prop) !== void 0
+  }
+);
 
-;// CONCATENATED MODULE: ./node_modules/form-data-encoder/lib/util/escapeName.js
-const escapeName = (name) => String(name)
-    .replace(/\r/g, "%0D")
-    .replace(/\n/g, "%0A")
-    .replace(/"/g, "%22");
+// src/util/isFormData.ts
+var lib_isFormData = (value) => Boolean(
+  value && lib_isFunction(value.constructor) && value[Symbol.toStringTag] === "FormData" && lib_isFunction(value.append) && lib_isFunction(value.getAll) && lib_isFunction(value.entries) && lib_isFunction(value[Symbol.iterator])
+);
 
-;// CONCATENATED MODULE: ./node_modules/form-data-encoder/lib/util/isFile.js
+// src/util/escapeName.ts
+var escapeName = (name) => String(name).replace(/\r/g, "%0D").replace(/\n/g, "%0A").replace(/"/g, "%22");
 
-const isFile = (value) => Boolean(value
-    && typeof value === "object"
-    && isFunction(value.constructor)
-    && value[Symbol.toStringTag] === "File"
-    && isFunction(value.stream)
-    && value.name != null);
-const isFileLike = (/* unused pure expression or super */ null && (isFile));
+// src/util/isFile.ts
+var isFile = (value) => Boolean(
+  value && typeof value === "object" && lib_isFunction(value.constructor) && value[Symbol.toStringTag] === "File" && lib_isFunction(value.stream) && value.name != null
+);
 
-;// CONCATENATED MODULE: ./node_modules/form-data-encoder/lib/FormDataEncoder.js
-var __classPrivateFieldSet = (undefined && undefined.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
-    if (kind === "m") throw new TypeError("Private method is not writable");
-    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
-    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
-    return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
+// src/FormDataEncoder.ts
+var defaultOptions = {
+  enableAdditionalHeaders: false
 };
-var __classPrivateFieldGet = (undefined && undefined.__classPrivateFieldGet) || function (receiver, state, kind, f) {
-    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
-    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
-    return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+var readonlyProp = { writable: false, configurable: false };
+var _CRLF, _CRLF_BYTES, _CRLF_BYTES_LENGTH, _DASHES, _encoder, _footer, _form, _options, _getFieldHeader, getFieldHeader_fn, _getContentLength, getContentLength_fn;
+var FormDataEncoder = class {
+  constructor(form, boundaryOrOptions, options) {
+    __privateAdd(this, _getFieldHeader);
+    /**
+     * Returns form-data content length
+     */
+    __privateAdd(this, _getContentLength);
+    __privateAdd(this, _CRLF, "\r\n");
+    __privateAdd(this, _CRLF_BYTES, void 0);
+    __privateAdd(this, _CRLF_BYTES_LENGTH, void 0);
+    __privateAdd(this, _DASHES, "-".repeat(2));
+    /**
+     * TextEncoder instance
+     */
+    __privateAdd(this, _encoder, new TextEncoder());
+    /**
+     * Returns form-data footer bytes
+     */
+    __privateAdd(this, _footer, void 0);
+    /**
+     * FormData instance
+     */
+    __privateAdd(this, _form, void 0);
+    /**
+     * Instance options
+     */
+    __privateAdd(this, _options, void 0);
+    if (!lib_isFormData(form)) {
+      throw new TypeError("Expected first argument to be a FormData instance.");
+    }
+    let boundary;
+    if (lib_isPlainObject(boundaryOrOptions)) {
+      options = boundaryOrOptions;
+    } else {
+      boundary = boundaryOrOptions;
+    }
+    if (!boundary) {
+      boundary = createBoundary();
+    }
+    if (typeof boundary !== "string") {
+      throw new TypeError("Expected boundary argument to be a string.");
+    }
+    if (options && !lib_isPlainObject(options)) {
+      throw new TypeError("Expected options argument to be an object.");
+    }
+    __privateSet(this, _form, Array.from(form.entries()));
+    __privateSet(this, _options, { ...defaultOptions, ...options });
+    __privateSet(this, _CRLF_BYTES, __privateGet(this, _encoder).encode(__privateGet(this, _CRLF)));
+    __privateSet(this, _CRLF_BYTES_LENGTH, __privateGet(this, _CRLF_BYTES).byteLength);
+    this.boundary = `form-data-boundary-${boundary}`;
+    this.contentType = `multipart/form-data; boundary=${this.boundary}`;
+    __privateSet(this, _footer, __privateGet(this, _encoder).encode(
+      `${__privateGet(this, _DASHES)}${this.boundary}${__privateGet(this, _DASHES)}${__privateGet(this, _CRLF).repeat(2)}`
+    ));
+    const headers = {
+      "Content-Type": this.contentType
+    };
+    const contentLength = __privateMethod(this, _getContentLength, getContentLength_fn).call(this);
+    if (contentLength) {
+      this.contentLength = contentLength;
+      headers["Content-Length"] = contentLength;
+    }
+    this.headers = proxyHeaders(Object.freeze(headers));
+    Object.defineProperties(this, {
+      boundary: readonlyProp,
+      contentType: readonlyProp,
+      contentLength: readonlyProp,
+      headers: readonlyProp
+    });
+  }
+  /**
+   * Creates an iterator allowing to go through form-data parts (with metadata).
+   * This method **will not** read the files and **will not** split values big into smaller chunks.
+   *
+   * Using this method, you can convert form-data content into Blob:
+   *
+   * @example
+   *
+   * ```ts
+   * import {Readable} from "stream"
+   *
+   * import {FormDataEncoder} from "form-data-encoder"
+   *
+   * import {FormData} from "formdata-polyfill/esm-min.js"
+   * import {fileFrom} from "fetch-blob/form.js"
+   * import {File} from "fetch-blob/file.js"
+   * import {Blob} from "fetch-blob"
+   *
+   * import fetch from "node-fetch"
+   *
+   * const form = new FormData()
+   *
+   * form.set("field", "Just a random string")
+   * form.set("file", new File(["Using files is class amazing"]))
+   * form.set("fileFromPath", await fileFrom("path/to/a/file.txt"))
+   *
+   * const encoder = new FormDataEncoder(form)
+   *
+   * const options = {
+   *   method: "post",
+   *   body: new Blob(encoder, {type: encoder.contentType})
+   * }
+   *
+   * const response = await fetch("https://httpbin.org/post", options)
+   *
+   * console.log(await response.json())
+   * ```
+   */
+  *values() {
+    for (const [name, raw] of __privateGet(this, _form)) {
+      const value = isFile(raw) ? raw : __privateGet(this, _encoder).encode(
+        normalizeValue(raw)
+      );
+      yield __privateMethod(this, _getFieldHeader, getFieldHeader_fn).call(this, name, value);
+      yield value;
+      yield __privateGet(this, _CRLF_BYTES);
+    }
+    yield __privateGet(this, _footer);
+  }
+  /**
+   * Creates an async iterator allowing to perform the encoding by portions.
+   * This method reads through files and splits big values into smaller pieces (65536 bytes per each).
+   *
+   * @example
+   *
+   * ```ts
+   * import {Readable} from "stream"
+   *
+   * import {FormData, File, fileFromPath} from "formdata-node"
+   * import {FormDataEncoder} from "form-data-encoder"
+   *
+   * import fetch from "node-fetch"
+   *
+   * const form = new FormData()
+   *
+   * form.set("field", "Just a random string")
+   * form.set("file", new File(["Using files is class amazing"], "file.txt"))
+   * form.set("fileFromPath", await fileFromPath("path/to/a/file.txt"))
+   *
+   * const encoder = new FormDataEncoder(form)
+   *
+   * const options = {
+   *   method: "post",
+   *   headers: encoder.headers,
+   *   body: Readable.from(encoder.encode()) // or Readable.from(encoder)
+   * }
+   *
+   * const response = await fetch("https://httpbin.org/post", options)
+   *
+   * console.log(await response.json())
+   * ```
+   */
+  async *encode() {
+    for (const part of this.values()) {
+      if (isFile(part)) {
+        yield* getStreamIterator(part.stream());
+      } else {
+        yield* chunk(part);
+      }
+    }
+  }
+  /**
+   * Creates an iterator allowing to read through the encoder data using for...of loops
+   */
+  [Symbol.iterator]() {
+    return this.values();
+  }
+  /**
+   * Creates an **async** iterator allowing to read through the encoder data using for-await...of loops
+   */
+  [Symbol.asyncIterator]() {
+    return this.encode();
+  }
 };
-var _FormDataEncoder_instances, _FormDataEncoder_CRLF, _FormDataEncoder_CRLF_BYTES, _FormDataEncoder_CRLF_BYTES_LENGTH, _FormDataEncoder_DASHES, _FormDataEncoder_encoder, _FormDataEncoder_footer, _FormDataEncoder_form, _FormDataEncoder_options, _FormDataEncoder_getFieldHeader, _FormDataEncoder_getContentLength;
-
-
-
-
-
-
-
-
-const defaultOptions = {
-    enableAdditionalHeaders: false
+_CRLF = new WeakMap();
+_CRLF_BYTES = new WeakMap();
+_CRLF_BYTES_LENGTH = new WeakMap();
+_DASHES = new WeakMap();
+_encoder = new WeakMap();
+_footer = new WeakMap();
+_form = new WeakMap();
+_options = new WeakMap();
+_getFieldHeader = new WeakSet();
+getFieldHeader_fn = function(name, value) {
+  let header = "";
+  header += `${__privateGet(this, _DASHES)}${this.boundary}${__privateGet(this, _CRLF)}`;
+  header += `Content-Disposition: form-data; name="${escapeName(name)}"`;
+  if (isFile(value)) {
+    header += `; filename="${escapeName(value.name)}"${__privateGet(this, _CRLF)}`;
+    header += `Content-Type: ${value.type || "application/octet-stream"}`;
+  }
+  if (__privateGet(this, _options).enableAdditionalHeaders === true) {
+    const size = isFile(value) ? value.size : value.byteLength;
+    if (size != null && !isNaN(size)) {
+      header += `${__privateGet(this, _CRLF)}Content-Length: ${size}`;
+    }
+  }
+  return __privateGet(this, _encoder).encode(`${header}${__privateGet(this, _CRLF).repeat(2)}`);
 };
-const readonlyProp = { writable: false, configurable: false };
-class FormDataEncoder {
-    constructor(form, boundaryOrOptions, options) {
-        _FormDataEncoder_instances.add(this);
-        _FormDataEncoder_CRLF.set(this, "\r\n");
-        _FormDataEncoder_CRLF_BYTES.set(this, void 0);
-        _FormDataEncoder_CRLF_BYTES_LENGTH.set(this, void 0);
-        _FormDataEncoder_DASHES.set(this, "-".repeat(2));
-        _FormDataEncoder_encoder.set(this, new TextEncoder());
-        _FormDataEncoder_footer.set(this, void 0);
-        _FormDataEncoder_form.set(this, void 0);
-        _FormDataEncoder_options.set(this, void 0);
-        if (!isFormData(form)) {
-            throw new TypeError("Expected first argument to be a FormData instance.");
-        }
-        let boundary;
-        if (isPlainObject(boundaryOrOptions)) {
-            options = boundaryOrOptions;
-        }
-        else {
-            boundary = boundaryOrOptions;
-        }
-        if (!boundary) {
-            boundary = createBoundary();
-        }
-        if (typeof boundary !== "string") {
-            throw new TypeError("Expected boundary argument to be a string.");
-        }
-        if (options && !isPlainObject(options)) {
-            throw new TypeError("Expected options argument to be an object.");
-        }
-        __classPrivateFieldSet(this, _FormDataEncoder_form, Array.from(form.entries()), "f");
-        __classPrivateFieldSet(this, _FormDataEncoder_options, { ...defaultOptions, ...options }, "f");
-        __classPrivateFieldSet(this, _FormDataEncoder_CRLF_BYTES, __classPrivateFieldGet(this, _FormDataEncoder_encoder, "f").encode(__classPrivateFieldGet(this, _FormDataEncoder_CRLF, "f")), "f");
-        __classPrivateFieldSet(this, _FormDataEncoder_CRLF_BYTES_LENGTH, __classPrivateFieldGet(this, _FormDataEncoder_CRLF_BYTES, "f").byteLength, "f");
-        this.boundary = `form-data-boundary-${boundary}`;
-        this.contentType = `multipart/form-data; boundary=${this.boundary}`;
-        __classPrivateFieldSet(this, _FormDataEncoder_footer, __classPrivateFieldGet(this, _FormDataEncoder_encoder, "f").encode(`${__classPrivateFieldGet(this, _FormDataEncoder_DASHES, "f")}${this.boundary}${__classPrivateFieldGet(this, _FormDataEncoder_DASHES, "f")}${__classPrivateFieldGet(this, _FormDataEncoder_CRLF, "f").repeat(2)}`), "f");
-        const headers = {
-            "Content-Type": this.contentType
-        };
-        const contentLength = __classPrivateFieldGet(this, _FormDataEncoder_instances, "m", _FormDataEncoder_getContentLength).call(this);
-        if (contentLength) {
-            this.contentLength = contentLength;
-            headers["Content-Length"] = contentLength;
-        }
-        this.headers = proxyHeaders(Object.freeze(headers));
-        Object.defineProperties(this, {
-            boundary: readonlyProp,
-            contentType: readonlyProp,
-            contentLength: readonlyProp,
-            headers: readonlyProp
-        });
+_getContentLength = new WeakSet();
+getContentLength_fn = function() {
+  let length = 0;
+  for (const [name, raw] of __privateGet(this, _form)) {
+    const value = isFile(raw) ? raw : __privateGet(this, _encoder).encode(
+      normalizeValue(raw)
+    );
+    const size = isFile(value) ? value.size : value.byteLength;
+    if (size == null || isNaN(size)) {
+      return void 0;
     }
-    getContentLength() {
-        return this.contentLength == null ? undefined : Number(this.contentLength);
-    }
-    *values() {
-        for (const [name, raw] of __classPrivateFieldGet(this, _FormDataEncoder_form, "f")) {
-            const value = isFile(raw) ? raw : __classPrivateFieldGet(this, _FormDataEncoder_encoder, "f").encode(normalizeValue(raw));
-            yield __classPrivateFieldGet(this, _FormDataEncoder_instances, "m", _FormDataEncoder_getFieldHeader).call(this, name, value);
-            yield value;
-            yield __classPrivateFieldGet(this, _FormDataEncoder_CRLF_BYTES, "f");
-        }
-        yield __classPrivateFieldGet(this, _FormDataEncoder_footer, "f");
-    }
-    async *encode() {
-        for (const part of this.values()) {
-            if (isFile(part)) {
-                yield* getStreamIterator(part.stream());
-            }
-            else {
-                yield part;
-            }
-        }
-    }
-    [(_FormDataEncoder_CRLF = new WeakMap(), _FormDataEncoder_CRLF_BYTES = new WeakMap(), _FormDataEncoder_CRLF_BYTES_LENGTH = new WeakMap(), _FormDataEncoder_DASHES = new WeakMap(), _FormDataEncoder_encoder = new WeakMap(), _FormDataEncoder_footer = new WeakMap(), _FormDataEncoder_form = new WeakMap(), _FormDataEncoder_options = new WeakMap(), _FormDataEncoder_instances = new WeakSet(), _FormDataEncoder_getFieldHeader = function _FormDataEncoder_getFieldHeader(name, value) {
-        let header = "";
-        header += `${__classPrivateFieldGet(this, _FormDataEncoder_DASHES, "f")}${this.boundary}${__classPrivateFieldGet(this, _FormDataEncoder_CRLF, "f")}`;
-        header += `Content-Disposition: form-data; name="${escapeName(name)}"`;
-        if (isFile(value)) {
-            header += `; filename="${escapeName(value.name)}"${__classPrivateFieldGet(this, _FormDataEncoder_CRLF, "f")}`;
-            header += `Content-Type: ${value.type || "application/octet-stream"}`;
-        }
-        const size = isFile(value) ? value.size : value.byteLength;
-        if (__classPrivateFieldGet(this, _FormDataEncoder_options, "f").enableAdditionalHeaders === true
-            && size != null
-            && !isNaN(size)) {
-            header += `${__classPrivateFieldGet(this, _FormDataEncoder_CRLF, "f")}Content-Length: ${isFile(value) ? value.size : value.byteLength}`;
-        }
-        return __classPrivateFieldGet(this, _FormDataEncoder_encoder, "f").encode(`${header}${__classPrivateFieldGet(this, _FormDataEncoder_CRLF, "f").repeat(2)}`);
-    }, _FormDataEncoder_getContentLength = function _FormDataEncoder_getContentLength() {
-        let length = 0;
-        for (const [name, raw] of __classPrivateFieldGet(this, _FormDataEncoder_form, "f")) {
-            const value = isFile(raw) ? raw : __classPrivateFieldGet(this, _FormDataEncoder_encoder, "f").encode(normalizeValue(raw));
-            const size = isFile(value) ? value.size : value.byteLength;
-            if (size == null || isNaN(size)) {
-                return undefined;
-            }
-            length += __classPrivateFieldGet(this, _FormDataEncoder_instances, "m", _FormDataEncoder_getFieldHeader).call(this, name, value).byteLength;
-            length += size;
-            length += __classPrivateFieldGet(this, _FormDataEncoder_CRLF_BYTES_LENGTH, "f");
-        }
-        return String(length + __classPrivateFieldGet(this, _FormDataEncoder_footer, "f").byteLength);
-    }, Symbol.iterator)]() {
-        return this.values();
-    }
-    [Symbol.asyncIterator]() {
-        return this.encode();
-    }
-}
+    length += __privateMethod(this, _getFieldHeader, getFieldHeader_fn).call(this, name, value).byteLength;
+    length += size;
+    length += __privateGet(this, _CRLF_BYTES_LENGTH);
+  }
+  return String(length + __privateGet(this, _footer).byteLength);
+};
+
 
 // EXTERNAL MODULE: external "node:util"
 var external_node_util_ = __nccwpck_require__(7261);
@@ -39756,29 +41154,20 @@ function unhandle() {
 
 
 const reentry = Symbol('reentry');
-const noop = () => { };
+const timed_out_noop = () => { };
 class timed_out_TimeoutError extends Error {
+    event;
+    code;
     constructor(threshold, event) {
         super(`Timeout awaiting '${event}' for ${threshold}ms`);
-        Object.defineProperty(this, "event", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: event
-        });
-        Object.defineProperty(this, "code", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
+        this.event = event;
         this.name = 'TimeoutError';
         this.code = 'ETIMEDOUT';
     }
 }
 function timedOut(request, delays, options) {
     if (reentry in request) {
-        return noop;
+        return timed_out_noop;
     }
     request[reentry] = true;
     const cancelers = [];
@@ -39918,19 +41307,9 @@ function urlToOptions(url) {
 
 ;// CONCATENATED MODULE: ./node_modules/got/dist/source/core/utils/weakable-map.js
 class WeakableMap {
+    weakMap;
+    map;
     constructor() {
-        Object.defineProperty(this, "weakMap", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "map", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
         this.weakMap = new WeakMap();
         this.map = new Map();
     }
@@ -40050,7 +41429,7 @@ const getIfaceInfo = () => {
 	return {has4, has6};
 };
 
-const isIterable = map => {
+const source_isIterable = map => {
 	return Symbol.iterator in map;
 };
 
@@ -40324,7 +41703,7 @@ class CacheableLookup {
 				};
 			}
 
-			if (isIterable(this._cache)) {
+			if (source_isIterable(this._cache)) {
 				this._tick(cacheTtl);
 			}
 		}
@@ -40454,7 +41833,7 @@ function parseLinkHeader(link) {
         const [rawUriReference, ...rawLinkParameters] = item.split(';');
         const trimmedUriReference = rawUriReference.trim();
         // eslint-disable-next-line @typescript-eslint/prefer-string-starts-ends-with
-        if (trimmedUriReference[0] !== '<' || trimmedUriReference[trimmedUriReference.length - 1] !== '>') {
+        if (trimmedUriReference[0] !== '<' || trimmedUriReference.at(-1) !== '>') {
             throw new Error(`Invalid format of the Link header reference: ${trimmedUriReference}`);
         }
         const reference = trimmedUriReference.slice(1, -1);
@@ -40778,31 +42157,11 @@ const init = (options, withOptions, self) => {
     }
 };
 class Options {
+    _unixOptions;
+    _internals;
+    _merging;
+    _init;
     constructor(input, options, defaults) {
-        Object.defineProperty(this, "_unixOptions", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "_internals", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "_merging", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "_init", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
         assert.any([dist.string, dist.urlInstance, dist.object, dist.undefined], input);
         assert.any([dist.object, dist.undefined], options);
         assert.any([dist.object, dist.undefined], defaults);
@@ -41098,7 +42457,7 @@ class Options {
         return this._internals.body;
     }
     set body(value) {
-        assert.any([dist.string, dist.buffer, dist.nodeStream, dist.generator, dist.asyncGenerator, isFormData, dist.undefined], value);
+        assert.any([dist.string, dist.buffer, dist.nodeStream, dist.generator, dist.asyncGenerator, lib_isFormData, dist.undefined], value);
         if (dist.nodeStream(value)) {
             assert.truthy(value.readable);
         }
@@ -41483,7 +42842,9 @@ class Options {
         }
     }
     /**
-    Defines if redirect responses should be followed automatically.
+    Whether redirect responses should be followed automatically.
+
+    Optionally, pass a function to dynamically decide based on the response object.
 
     Note that if a `303` is sent by the server in response to any request type (`POST`, `DELETE`, etc.), Got will automatically request the resource pointed to in the location header via `GET`.
     This is in accordance with [the spec](https://tools.ietf.org/html/rfc7231#section-6.4.4). You can optionally turn on this behavior also for other redirect codes - see `methodRewriting`.
@@ -41494,7 +42855,7 @@ class Options {
         return this._internals.followRedirect;
     }
     set followRedirect(value) {
-        assert.boolean(value);
+        assert.any([dist.boolean, dist.function_], value);
         this._internals.followRedirect = value;
     }
     get followRedirects() {
@@ -42139,7 +43500,9 @@ class Options {
 
 const isResponseOk = (response) => {
     const { statusCode } = response;
-    const limitStatusCode = response.request.options.followRedirect ? 299 : 399;
+    const { followRedirect } = response.request.options;
+    const shouldFollow = typeof followRedirect === 'function' ? followRedirect(response) : followRedirect;
+    const limitStatusCode = shouldFollow ? 299 : 399;
     return (statusCode >= 200 && statusCode <= limitStatusCode) || statusCode === 304;
 };
 /**
@@ -42211,7 +43574,6 @@ function isUnixSocketURL(url) {
 
 
 
-const { buffer: getStreamAsBuffer } = get_stream;
 const supportsBrotli = dist.string(external_node_process_namespaceObject.versions.brotli);
 const methodsWithoutBody = new Set(['GET', 'HEAD']);
 const cacheableStore = new WeakableMap();
@@ -42225,165 +43587,40 @@ const proxiedRequestEvents = [
 ];
 const core_noop = () => { };
 class Request extends external_node_stream_.Duplex {
+    // @ts-expect-error - Ignoring for now.
+    ['constructor'];
+    _noPipe;
+    // @ts-expect-error https://github.com/microsoft/TypeScript/issues/9568
+    options;
+    response;
+    requestUrl;
+    redirectUrls;
+    retryCount;
+    _stopRetry;
+    _downloadedSize;
+    _uploadedSize;
+    _stopReading;
+    _pipedServerResponses;
+    _request;
+    _responseSize;
+    _bodySize;
+    _unproxyEvents;
+    _isFromCache;
+    _cannotHaveBody;
+    _triggerRead;
+    _cancelTimeouts;
+    _removeListeners;
+    _nativeResponse;
+    _flushed;
+    _aborted;
+    // We need this because `this._request` if `undefined` when using cache
+    _requestInitialized;
     constructor(url, options, defaults) {
         super({
             // Don't destroy immediately, as the error may be emitted on unsuccessful retry
             autoDestroy: false,
             // It needs to be zero because we're just proxying the data to another stream
             highWaterMark: 0,
-        });
-        // @ts-expect-error - Ignoring for now.
-        Object.defineProperty(this, 'constructor', {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "_noPipe", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        // @ts-expect-error https://github.com/microsoft/TypeScript/issues/9568
-        Object.defineProperty(this, "options", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "response", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "requestUrl", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "redirectUrls", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "retryCount", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "_stopRetry", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "_downloadedSize", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "_uploadedSize", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "_stopReading", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "_pipedServerResponses", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "_request", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "_responseSize", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "_bodySize", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "_unproxyEvents", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "_isFromCache", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "_cannotHaveBody", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "_triggerRead", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "_cancelTimeouts", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "_removeListeners", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "_nativeResponse", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "_flushed", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "_aborted", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        // We need this because `this._request` if `undefined` when using cache
-        Object.defineProperty(this, "_requestInitialized", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
         });
         this._downloadedSize = 0;
         this._uploadedSize = 0;
@@ -42504,7 +43741,7 @@ class Request extends external_node_stream_.Duplex {
         void (async () => {
             // Node.js parser is really weird.
             // It emits post-request Parse Errors on the same instance as previous request. WTF.
-            // Therefore we need to check if it has been destroyed as well.
+            // Therefore, we need to check if it has been destroyed as well.
             //
             // Furthermore, Node.js 16 `response.destroy()` doesn't immediately destroy the socket,
             // but makes the response unreadable. So we additionally need to check `response.readable`.
@@ -42703,7 +43940,7 @@ class Request extends external_node_stream_.Duplex {
             const noContentType = !dist.string(headers['content-type']);
             if (isBody) {
                 // Body is spec-compliant FormData
-                if (isFormData(options.body)) {
+                if (lib_isFormData(options.body)) {
                     const encoder = new FormDataEncoder(options.body);
                     if (noContentType) {
                         headers['content-type'] = encoder.headers['Content-Type'];
@@ -42821,76 +44058,79 @@ class Request extends external_node_stream_.Duplex {
         if (this.isAborted) {
             return;
         }
-        if (options.followRedirect && response.headers.location && redirectCodes.has(statusCode)) {
+        if (response.headers.location && redirectCodes.has(statusCode)) {
             // We're being redirected, we don't care about the response.
             // It'd be best to abort the request, but we can't because
             // we would have to sacrifice the TCP connection. We don't want that.
-            response.resume();
-            this._cancelTimeouts();
-            this._unproxyEvents();
-            if (this.redirectUrls.length >= options.maxRedirects) {
-                this._beforeError(new MaxRedirectsError(this));
-                return;
-            }
-            this._request = undefined;
-            const updatedOptions = new Options(undefined, undefined, this.options);
-            const serverRequestedGet = statusCode === 303 && updatedOptions.method !== 'GET' && updatedOptions.method !== 'HEAD';
-            const canRewrite = statusCode !== 307 && statusCode !== 308;
-            const userRequestedGet = updatedOptions.methodRewriting && canRewrite;
-            if (serverRequestedGet || userRequestedGet) {
-                updatedOptions.method = 'GET';
-                updatedOptions.body = undefined;
-                updatedOptions.json = undefined;
-                updatedOptions.form = undefined;
-                delete updatedOptions.headers['content-length'];
-            }
-            try {
-                // We need this in order to support UTF-8
-                const redirectBuffer = external_node_buffer_namespaceObject.Buffer.from(response.headers.location, 'binary').toString();
-                const redirectUrl = new URL(redirectBuffer, url);
-                if (!isUnixSocketURL(url) && isUnixSocketURL(redirectUrl)) {
-                    this._beforeError(new RequestError('Cannot redirect to UNIX socket', {}, this));
+            const shouldFollow = typeof options.followRedirect === 'function' ? options.followRedirect(typedResponse) : options.followRedirect;
+            if (shouldFollow) {
+                response.resume();
+                this._cancelTimeouts();
+                this._unproxyEvents();
+                if (this.redirectUrls.length >= options.maxRedirects) {
+                    this._beforeError(new MaxRedirectsError(this));
                     return;
                 }
-                // Redirecting to a different site, clear sensitive data.
-                if (redirectUrl.hostname !== url.hostname || redirectUrl.port !== url.port) {
-                    if ('host' in updatedOptions.headers) {
-                        delete updatedOptions.headers.host;
-                    }
-                    if ('cookie' in updatedOptions.headers) {
-                        delete updatedOptions.headers.cookie;
-                    }
-                    if ('authorization' in updatedOptions.headers) {
-                        delete updatedOptions.headers.authorization;
-                    }
-                    if (updatedOptions.username || updatedOptions.password) {
-                        updatedOptions.username = '';
-                        updatedOptions.password = '';
-                    }
+                this._request = undefined;
+                const updatedOptions = new Options(undefined, undefined, this.options);
+                const serverRequestedGet = statusCode === 303 && updatedOptions.method !== 'GET' && updatedOptions.method !== 'HEAD';
+                const canRewrite = statusCode !== 307 && statusCode !== 308;
+                const userRequestedGet = updatedOptions.methodRewriting && canRewrite;
+                if (serverRequestedGet || userRequestedGet) {
+                    updatedOptions.method = 'GET';
+                    updatedOptions.body = undefined;
+                    updatedOptions.json = undefined;
+                    updatedOptions.form = undefined;
+                    delete updatedOptions.headers['content-length'];
                 }
-                else {
-                    redirectUrl.username = updatedOptions.username;
-                    redirectUrl.password = updatedOptions.password;
+                try {
+                    // We need this in order to support UTF-8
+                    const redirectBuffer = external_node_buffer_namespaceObject.Buffer.from(response.headers.location, 'binary').toString();
+                    const redirectUrl = new URL(redirectBuffer, url);
+                    if (!isUnixSocketURL(url) && isUnixSocketURL(redirectUrl)) {
+                        this._beforeError(new RequestError('Cannot redirect to UNIX socket', {}, this));
+                        return;
+                    }
+                    // Redirecting to a different site, clear sensitive data.
+                    if (redirectUrl.hostname !== url.hostname || redirectUrl.port !== url.port) {
+                        if ('host' in updatedOptions.headers) {
+                            delete updatedOptions.headers.host;
+                        }
+                        if ('cookie' in updatedOptions.headers) {
+                            delete updatedOptions.headers.cookie;
+                        }
+                        if ('authorization' in updatedOptions.headers) {
+                            delete updatedOptions.headers.authorization;
+                        }
+                        if (updatedOptions.username || updatedOptions.password) {
+                            updatedOptions.username = '';
+                            updatedOptions.password = '';
+                        }
+                    }
+                    else {
+                        redirectUrl.username = updatedOptions.username;
+                        redirectUrl.password = updatedOptions.password;
+                    }
+                    this.redirectUrls.push(redirectUrl);
+                    updatedOptions.prefixUrl = '';
+                    updatedOptions.url = redirectUrl;
+                    for (const hook of updatedOptions.hooks.beforeRedirect) {
+                        // eslint-disable-next-line no-await-in-loop
+                        await hook(updatedOptions, typedResponse);
+                    }
+                    this.emit('redirect', updatedOptions, typedResponse);
+                    this.options = updatedOptions;
+                    await this._makeRequest();
                 }
-                this.redirectUrls.push(redirectUrl);
-                updatedOptions.prefixUrl = '';
-                updatedOptions.url = redirectUrl;
-                for (const hook of updatedOptions.hooks.beforeRedirect) {
-                    // eslint-disable-next-line no-await-in-loop
-                    await hook(updatedOptions, typedResponse);
+                catch (error) {
+                    this._beforeError(error);
+                    return;
                 }
-                this.emit('redirect', updatedOptions, typedResponse);
-                this.options = updatedOptions;
-                await this._makeRequest();
-            }
-            catch (error) {
-                this._beforeError(error);
                 return;
             }
-            return;
         }
         // `HTTPError`s always have `error.response.body` defined.
-        // Therefore we cannot retry if `options.throwHttpErrors` is false.
+        // Therefore, we cannot retry if `options.throwHttpErrors` is false.
         // On the last retry, if `options.throwHttpErrors` is false, we would need to return the body,
         // but that wouldn't be possible since the body would be already read in `error.response.body`.
         if (options.isStream && options.throwHttpErrors && !isResponseOk(typedResponse)) {
@@ -43694,6 +44934,7 @@ const defaults = {
 };
 const got = source_create(defaults);
 /* harmony default export */ const got_dist_source = (got);
+// TODO: Remove this in the next major version.
 
 
 

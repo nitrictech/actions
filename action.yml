@@ -30,6 +30,8 @@ inputs:
 outputs:
   version:
     description: 'Version of installed Nitric CLI'
+  output:
+    description: 'Output from running command'
 
 runs:
   using: node20

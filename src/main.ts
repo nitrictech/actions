@@ -20,7 +20,10 @@ import * as os from 'os'
 import * as io from '@actions/io'
 import * as path from 'path'
 import * as semver from 'semver'
-import { getDownloadUrl, getInstalledVersion } from './utils'
+import { existsSync } from 'fs'
+import { getDownloadUrl } from './lib/get-download-url'
+import { getVersion } from './lib/get-version'
+import { commands } from './commands'
 
 const supportedPlatforms = ['linux']
 
@@ -37,6 +40,30 @@ export async function run() {
     const version = core.getInput('version')?.trim()
     if (!semver.valid(version) && version.toLowerCase() !== 'latest') {
       throw new Error('Incorrect version - Use semantic versioning E.g. 1.2.1')
+    }
+
+    // Check command
+    const command = core.getInput('command')?.trim()
+    const stackName = core.getInput('stack-name')?.trim()
+    if (command) {
+      if (!(command in commands)) {
+        throw new Error(
+          `Incorrect command - use one of the supported commands ${Object.keys(
+            commands
+          ).join(', ')}`
+        )
+      }
+
+      // Check stack-name
+      if (!stackName) {
+        throw new Error('A stack-name is required when using a command')
+      }
+
+      if (!existsSync(`./nitric-${stackName}.yaml`)) {
+        throw new Error(
+          `Stack '${stackName}' does not exist. Check ensure the nitric-${stackName}.yaml stack file exists`
+        )
+      }
     }
 
     // Download release version
@@ -59,8 +86,22 @@ export async function run() {
     const cachedPath = await tc.cacheDir(destination, 'nitric', version)
     core.addPath(cachedPath)
 
-    const installedVersion = await getInstalledVersion()
+    const installedVersion = await getVersion()
     core.setOutput('version', installedVersion)
+
+    // run command if exists
+    if (command && stackName) {
+      core.info(`Running command ${command}`)
+      const output = await commands[command as keyof typeof commands](stackName)
+      core.info(`Done running command ${command}`)
+
+      core.setOutput('output', output)
+
+      // cache docker
+      await tc.cacheDir(path.join(os.homedir(), '.docker'), 'docker', version)
+
+      //await tc.cacheDir('/tmp/.buildx-cache', 'buildx', version)
+    }
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)
   }

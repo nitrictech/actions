@@ -23,14 +23,20 @@ on:
       - main
 jobs:
   up:
-    name: Update AWS
+    name: Update
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: nitrictech/actions@v1
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
+
+      - name: Install and configure Pulumi 📦
+        uses: pulumi/actions@v4
+
+      - name: Applying infrastructure 🚀
+        uses: nitrictech/actions@v1
         with:
           command: up
-          stack-name: prod
+          stack-name: dev # replace with your stack
         env:
           PULUMI_CONFIG_PASSPHRASE: ${{ secrets.PULUMI_CONFIG_PASSPHRASE }}
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}

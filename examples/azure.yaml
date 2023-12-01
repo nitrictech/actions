@@ -11,6 +11,9 @@ jobs:
       - name: Checkout 🛎️
         uses: actions/checkout@v4
 
+      - name: Install and configure Pulumi 📦
+        uses: pulumi/actions@v4
+
       - name: Authenticate with Azure 🔑
         uses: azure/login@v1
         with:

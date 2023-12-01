@@ -16,20 +16,26 @@
 
 import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
+import * as c from '@actions/cache'
 import * as os from 'os'
 import * as io from '@actions/io'
+import * as github from '@actions/github'
 import * as path from 'path'
 import * as semver from 'semver'
 import { existsSync } from 'fs'
 import { getDownloadUrl } from './lib/get-download-url'
 import { getVersion } from './lib/get-version'
-import { commands } from './lib/commands'
+import { commands, dockerCacheRead, dockerCacheWrite } from './lib/commands'
 
 const supportedPlatforms = ['linux']
+const supportedDockerCacheCommands = ['up']
 
 export async function run() {
   try {
     const runnerPlatform = os.platform()
+    const dockerCacheKey = `docker-cache-${runnerPlatform}-${github.context.runId}`
+    const dockerCachePath = `./.nitric/${dockerCacheRead}`
+
     // Check for git action platform compatibility
     // MacOS runner does not include docker and Windows runner cannot virtualize linux docker
     if (!supportedPlatforms.includes(runnerPlatform)) {
@@ -46,6 +52,13 @@ export async function run() {
     const command = core.getInput('command')?.trim()
     const stackName = core.getInput('stack-name')?.trim()
     if (command) {
+      if (supportedDockerCacheCommands.includes(command)) {
+        // restore docker cache
+        await c.restoreCache([dockerCachePath], dockerCacheKey, [
+          'docker-cache-'
+        ])
+      }
+
       if (!(command in commands)) {
         throw new Error(
           `Incorrect command - use one of the supported commands ${Object.keys(
@@ -97,10 +110,17 @@ export async function run() {
 
       core.setOutput('output', output)
 
-      // cache docker
-      await tc.cacheDir(path.join(os.homedir(), '.docker'), 'docker', version)
+      if (supportedDockerCacheCommands.includes(command)) {
+        // Move docker cache write cache to read
+        await io.rmRF(dockerCachePath)
+        await io.mv(`.nitric/${dockerCacheWrite}/`, dockerCachePath)
 
-      //await tc.cacheDir('/tmp/.buildx-cache', 'buildx', version)
+        // cache docker
+        await c.saveCache([dockerCachePath], dockerCacheKey)
+
+        // prevent blank slow post cleanup [https://github.com/actions/toolkit/issues/1578]
+        process.exit(0)
+      }
     }
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)

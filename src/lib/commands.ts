@@ -16,11 +16,34 @@
 
 import { exec } from './exec'
 
+export const dockerCacheRead = 'docker-cache/read'
+export const dockerCacheWrite = 'docker-cache/write'
+
+// Docker cache env vars
+const dockerEnv = {
+  DOCKER_BUILD_CACHE_SRC: `.nitric/${dockerCacheRead}`,
+  DOCKER_BUILD_CACHE_DEST: `.nitric/${dockerCacheWrite}`
+}
+
 const up = async (stackName: string) =>
-  (await exec(`nitric up --ci --stack ${stackName} -v2`)).stdout
+  (
+    await exec(
+      `nitric up --ci --stack ${stackName} -v2`,
+      undefined,
+      false,
+      dockerEnv
+    )
+  ).stdout
 
 const down = async (stackName: string) =>
-  (await exec(`nitric down --ci --stack ${stackName} -v2`)).stdout
+  (
+    await exec(
+      `nitric down --ci --stack ${stackName} -v2`,
+      undefined,
+      false,
+      dockerEnv
+    )
+  ).stdout
 
 export const commands = {
   up,

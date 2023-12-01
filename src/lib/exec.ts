@@ -15,7 +15,6 @@
 // limitations under the License.
 
 import * as aexec from '@actions/exec'
-
 export interface ExecResult {
   success: boolean
   stdout: string
@@ -25,14 +24,19 @@ export interface ExecResult {
 export const exec = async (
   command: string,
   args: string[] = [],
-  silent?: boolean
+  silent?: boolean,
+  env?: Record<string, string>
 ): Promise<ExecResult> => {
   const { exitCode, stdout, stderr } = await aexec.getExecOutput(
     command,
     args,
     {
       silent: silent,
-      ignoreReturnCode: true
+      ignoreReturnCode: true,
+      env: {
+        ...(process.env as Record<string, string>),
+        ...env
+      }
     }
   )
 

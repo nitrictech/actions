@@ -17,7 +17,7 @@
 import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
 import * as c from '@actions/cache'
-import * as os from 'os'
+import os from 'os'
 import * as io from '@actions/io'
 import * as github from '@actions/github'
 import * as path from 'path'

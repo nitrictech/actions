@@ -9,7 +9,7 @@
   },
   "scripts": {
     "bundle": "npm run format:write && npm run package",
-    "ci-test": "vitest",
+    "ci-test": "vitest --coverage",
     "coverage": "make-coverage-badge --output-path ./badges/coverage.svg",
     "format:write": "prettier --write **/*.ts",
     "format:check": "prettier --check **/*.ts",
@@ -44,6 +44,7 @@
     "@actions/github": "^6.0.0",
     "@actions/io": "^1.1.3",
     "@actions/tool-cache": "^2.0.1",
+    "@vitest/coverage-istanbul": "^1.1.0",
     "ky": "^1.1.3",
     "runtypes": "^6.7.0",
     "semver": "^7.5.4"

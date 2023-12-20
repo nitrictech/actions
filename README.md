@@ -1,7 +1,8 @@
 # Nitric CLI - Automated Cloud Deployment
 
-![](https://github.com/nitrictech/actions/workflows/build-test/badge.svg)
-![](https://github.com/nitrictech/actions/workflows/CodeQL/badge.svg)
+![CI](https://github.com/nitrictech/actions/workflows/Continuous%20Integration/badge.svg)
+![CodeQL](https://github.com/nitrictech/actions/workflows/CodeQL/badge.svg)
+[![Coverage](./badges/coverage.svg)](./badges/coverage.svg)
 
 [Nitric](https://nitric.io) is an
 [open source framework](https://github.com/nitrictech/nitric) for developing

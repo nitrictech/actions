@@ -1,5 +1,7 @@
-name: 'Nitric CLI Action'
-description: 'Setup Nitric CLI on GitHub Actions runners'
+name: 'Nitric CLI - Automated Cloud Deployment'
+description:
+  'Build with Nitric and use this Action to automatically deploy your
+  application with the right infrastructure to your cloud.'
 author: 'Nitric'
 
 # Add your action's branding here. This will appear on the GitHub Marketplace.

@@ -31,16 +31,19 @@ const supportedDockerCacheCommands = ['up']
 
 export async function run() {
   try {
-    const runnerPlatform = os.platform()
-    const dockerCacheKey = `docker-cache-${runnerPlatform}-${github.context.runId}`
-    const dockerCachePath = `./.nitric/${dockerCacheRead}`
-
     const startWorkingDirectory = process.cwd()
     const workingDirectory = core.getInput('working-directory')
       ? path.resolve(core.getInput('working-directory'))
       : startWorkingDirectory
 
     core.info(`working directory ${workingDirectory}`)
+
+    const runnerPlatform = os.platform()
+    const dockerCacheKey = `docker-cache-${runnerPlatform}-${github.context.runId}`
+    const dockerCachePath = path.join(
+      workingDirectory,
+      `./.nitric/${dockerCacheRead}`
+    )
 
     // Check for git action platform compatibility
     // MacOS runner does not include docker and Windows runner cannot virtualize linux docker
@@ -116,7 +119,10 @@ export async function run() {
       if (supportedDockerCacheCommands.includes(command)) {
         // Move docker cache write cache to read
         await io.rmRF(dockerCachePath)
-        await io.mv(`.nitric/${dockerCacheWrite}/`, dockerCachePath)
+        await io.mv(
+          path.join(workingDirectory, `.nitric/${dockerCacheWrite}/`),
+          dockerCachePath
+        )
 
         // cache docker
         await c.saveCache([dockerCachePath], dockerCacheKey)

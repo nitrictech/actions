@@ -24,6 +24,7 @@ export interface ExecResult {
 export const exec = async (
   command: string,
   args: string[] = [],
+  cwd: string,
   silent?: boolean,
   env?: Record<string, string>
 ): Promise<ExecResult> => {
@@ -33,6 +34,7 @@ export const exec = async (
     {
       silent: silent,
       ignoreReturnCode: true,
+      cwd,
       env: {
         ...(process.env as Record<string, string>),
         ...env

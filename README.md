@@ -54,11 +54,12 @@ This will check out the existing directory and run nitric up.
 
 The actions supports the following inputs:
 
-| Name         | Type   | Description                                                                                                                              | Default  | Required                  |
-| ------------ | ------ | ---------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------- |
-| `version`    | String | Nitric CLI version (or `latest`)                                                                                                         | `latest` | false                     |
-| `command`    | String | The command to run as part of the action. Accepted values are up and down. If unspecified, the action will stop after installing Nitric. |          | false                     |
-| `stack-name` | String | The name of the stack that Nitric will be operating on. The stack file should be located in the working directory.                       |          | When command is specified |
+| Name                | Type   | Description                                                                                                                              | Default  | Required                  |
+| ------------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------- |
+| `version`           | String | Nitric CLI version (or `latest`)                                                                                                         | `latest` | false                     |
+| `command`           | String | The command to run as part of the action. Accepted values are up and down. If unspecified, the action will stop after installing Nitric. |          | false                     |
+| `stack-name`        | String | The name of the stack that Nitric will be operating on. The stack file should be located in the working directory.                       |          | When command is specified |
+| `working-directory` | String | Working directory containing Nitric stack. Useful for mono-repos.                                                                        |          | false                     |
 
 ## Installation Only
 
@@ -77,7 +78,7 @@ A specific version of the `Nitric` CLI can be installed:
 steps:
   - uses: nitrictech/actions@v1
     with:
-      version: 1.33.3
+      version: 1.34.4
 ```
 
 ## Examples

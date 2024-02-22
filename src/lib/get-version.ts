@@ -17,7 +17,7 @@
 import { exec } from './exec'
 
 export const getVersion = async (): Promise<string> => {
-  const { stdout } = await exec('nitric', ['version'], true)
+  const { stdout } = await exec('nitric', ['version'], process.cwd(), true)
 
   const version = stdout.trim()
   if (!version) {

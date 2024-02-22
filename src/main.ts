@@ -22,7 +22,6 @@ import * as io from '@actions/io'
 import * as github from '@actions/github'
 import * as path from 'path'
 import * as semver from 'semver'
-import { existsSync } from 'fs'
 import { getDownloadUrl } from './lib/get-download-url'
 import { getVersion } from './lib/get-version'
 import { commands, dockerCacheRead, dockerCacheWrite } from './lib/commands'
@@ -77,14 +76,6 @@ export async function run() {
       // Check stack-name
       if (!stackName) {
         throw new Error('A stack-name is required when using a command')
-      }
-
-      if (
-        !existsSync(path.join(workingDirectory, `./nitric-${stackName}.yaml`))
-      ) {
-        throw new Error(
-          `Stack '${stackName}' does not exist. Check ensure the nitric-${stackName}.yaml stack file exists`
-        )
       }
     }
 

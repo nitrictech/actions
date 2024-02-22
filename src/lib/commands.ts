@@ -28,7 +28,7 @@ const dockerEnv = {
 const up = async (stackName: string, cwd: string) =>
   (
     await exec(
-      `nitric up --ci --stack ${stackName} -v2`,
+      `nitric up --ci --stack ${stackName}`,
       undefined,
       cwd,
       false,
@@ -39,7 +39,7 @@ const up = async (stackName: string, cwd: string) =>
 const down = async (stackName: string, cwd: string) =>
   (
     await exec(
-      `nitric down --ci --stack ${stackName} -v2`,
+      `nitric down --ci --stack ${stackName}`,
       undefined,
       cwd,
       false,

@@ -24,6 +24,9 @@ inputs:
   command:
     description: 'Nitric command to run, eg. up or down'
     required: false
+  working-directory:
+    description: 'Working directory containing Nitric stack'
+    required: false
   stack-name:
     description: 'Which stack you want to deploy, eg. dev'
     required: false

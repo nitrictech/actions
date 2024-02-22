@@ -22,7 +22,6 @@ import * as io from '@actions/io'
 import * as github from '@actions/github'
 import * as path from 'path'
 import * as semver from 'semver'
-import { existsSync } from 'fs'
 import { getDownloadUrl } from './lib/get-download-url'
 import { getVersion } from './lib/get-version'
 import { commands, dockerCacheRead, dockerCacheWrite } from './lib/commands'
@@ -35,6 +34,13 @@ export async function run() {
     const runnerPlatform = os.platform()
     const dockerCacheKey = `docker-cache-${runnerPlatform}-${github.context.runId}`
     const dockerCachePath = `./.nitric/${dockerCacheRead}`
+
+    const startWorkingDirectory = process.cwd()
+    const workingDirectory = core.getInput('working-directory')
+      ? path.resolve(core.getInput('working-directory'))
+      : startWorkingDirectory
+
+    core.info(`working directory ${workingDirectory}`)
 
     // Check for git action platform compatibility
     // MacOS runner does not include docker and Windows runner cannot virtualize linux docker
@@ -71,12 +77,6 @@ export async function run() {
       if (!stackName) {
         throw new Error('A stack-name is required when using a command')
       }
-
-      if (!existsSync(`./nitric-${stackName}.yaml`)) {
-        throw new Error(
-          `Stack '${stackName}' does not exist. Check ensure the nitric-${stackName}.yaml stack file exists`
-        )
-      }
     }
 
     // Download release version
@@ -105,7 +105,10 @@ export async function run() {
     // run command if exists
     if (command && stackName) {
       core.info(`Running command ${command}`)
-      const output = await commands[command as keyof typeof commands](stackName)
+      const output = await commands[command as keyof typeof commands](
+        stackName,
+        workingDirectory
+      )
       core.info(`Done running command ${command}`)
 
       core.setOutput('output', output)

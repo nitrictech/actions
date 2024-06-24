@@ -108,10 +108,20 @@ export async function run() {
     // run command if exists
     if (command && stackName) {
       core.info(`Running command ${command}`)
-      const output = await commands[command as keyof typeof commands](
+      const {
+        stdout: output,
+        success,
+        stderr
+      } = await commands[command as keyof typeof commands](
         stackName,
         workingDirectory
       )
+
+      if (!success) {
+        core.error(`Failed running command ${command}`)
+        throw new Error(stderr)
+      }
+
       core.info(`Done running command ${command}`)
 
       core.setOutput('output', output)

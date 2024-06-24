@@ -26,26 +26,22 @@ const dockerEnv = {
 }
 
 const up = async (stackName: string, cwd: string) =>
-  (
-    await exec(
-      `nitric up --ci --stack ${stackName}`,
-      undefined,
-      cwd,
-      false,
-      dockerEnv
-    )
-  ).stdout
+  await exec(
+    `nitric up --ci --stack ${stackName}`,
+    undefined,
+    cwd,
+    false,
+    dockerEnv
+  )
 
 const down = async (stackName: string, cwd: string) =>
-  (
-    await exec(
-      `nitric down --ci --stack ${stackName}`,
-      undefined,
-      cwd,
-      false,
-      dockerEnv
-    )
-  ).stdout
+  await exec(
+    `nitric down --ci --stack ${stackName}`,
+    undefined,
+    cwd,
+    false,
+    dockerEnv
+  )
 
 export const commands = {
   up,

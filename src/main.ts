@@ -117,6 +117,10 @@ export async function run() {
         workingDirectory
       )
 
+      console.log('stderr1:', stderr)
+      console.log('output1:', output)
+      console.log('success1:', success)
+
       if (!success) {
         core.error(`Failed running command ${command}`)
         throw new Error(stderr)

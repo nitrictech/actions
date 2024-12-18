@@ -142,7 +142,12 @@ export async function run() {
       }
     }
   } catch (error) {
-    if (error instanceof Error) core.setFailed(error.message)
+    if (error instanceof Error) {
+      core.setFailed(error.message)
+    } else {
+      console.log('debug:', error)
+      core.setFailed('An unexpected error occurred')
+    }
   }
 }
 

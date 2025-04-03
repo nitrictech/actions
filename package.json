@@ -46,7 +46,7 @@
     "@actions/tool-cache": "^2.0.2",
     "@vitest/coverage-istanbul": "^2.1.9",
     "ky": "^1.7.4",
-    "runtypes": "^6.7.0",
+    "runtypes": "^7.0.4",
     "semver": "^7.6.3"
   },
   "devDependencies": {
